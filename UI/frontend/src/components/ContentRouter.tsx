@@ -13,6 +13,7 @@ export function ContentRouter() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="*" element={<Navigate to="/" />} />
         <Route path="user" element={<UserLayout />}>
           <Route path="*" element={<Navigate to="dashboard" />} />
           <Route path="dashboard" element={<Dashboard />} />
