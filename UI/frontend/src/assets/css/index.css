@@ -11,7 +11,7 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: rgb(229 229 229);
+    background: transparent;
     border-radius: 25px;
 
 }
