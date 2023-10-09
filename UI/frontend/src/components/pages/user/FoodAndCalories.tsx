@@ -113,6 +113,7 @@ export function FoodAndCalories() {
             onChange={(e) => setNewFoodItem({ ...newFoodItem, mealType: e.target.value })}
             className="border border-gray-300 px-2 py-1 rounded mb-4 w-full"
           >
+            <option value="" disabled>Select a meal type</option>
             <option value="Breakfast">Breakfast</option>
             <option value="Lunch">Lunch</option>
             <option value="Dinner">Dinner</option>
