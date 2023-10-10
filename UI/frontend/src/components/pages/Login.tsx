@@ -3,6 +3,7 @@ import { LoginPageButton } from "../login/LoginPageButton";
 import LoginInput from "../login/LoginInput";
 import SignUpInput from "../login/SignUpInput";
 import logo from "../../assets/images/logo.svg";
+import { useNavigate } from "react-router-dom";
 
 export function Login() {
   const [username, setUsername] = useState("");
@@ -15,6 +16,8 @@ export function Login() {
     const setSize = sessionStorage.getItem("loggingIn");
     return JSON.parse(setSize!) ?? true;
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     sessionStorage.setItem("loggingIn", JSON.stringify(login));
@@ -72,7 +75,7 @@ export function Login() {
                   <LoginPageButton
                     prompt="Login"
                     id="login"
-                    onClick={() => (window.location.href = "/user/dashboard")}
+                    onClick={() => navigate("/user/dashboard")}
                   />
                   <div className="w-full flex justify-center items-center  text-neutral-400 gap-4">
                     <div className="w-1/3 bg-neutral-300 h-1 rounded-full" />
@@ -93,7 +96,7 @@ export function Login() {
                   <LoginPageButton
                     prompt="Create Account"
                     id="createAccount"
-                    onClick={() => (window.location.href = "/user/dashboard")}
+                    onClick={() => navigate("/user/dashboard")}
                   />
                   <div className="w-full flex justify-center items-center  text-neutral-400 gap-4">
                     <div className="w-1/3 bg-neutral-300 h-1 rounded-full" />
