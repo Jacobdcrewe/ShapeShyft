@@ -23,7 +23,6 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # get node version
-      - name: Get Versioning
       - run: node --version
 
       # get npm version
@@ -32,12 +31,10 @@ jobs:
       - uses: actions/checkout@v3
 
       # go run npm install in UI/frontend
-      - name: Install packages
       - run: |
           cd UI/frontend
           npm install
       # run server using npm run start
-      - name: Run Server
       - run: |
           cd UI/frontend
           npm start
