@@ -1,10 +1,15 @@
 import React from "react";
+import { Box } from "@mui/material";
+
+import SearchWorkout from "../../Workout/SearchWorkout";
+import Exercises from "../../Workout/Exercises";
 
 export function Exercise() {
   return (
-    <div className="w-full h-full">
-      <p className="text-7xl">Exercise Page</p>
-    </div>
+    <Box>
+      <SearchWorkout />
+      <Exercises />
+    </Box>
   );
 }
 export default Exercise;
