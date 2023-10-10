@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import "../../assets/css/index.css";
+import HorizontalScrollbar from "./HorizontalScrollbar";
 
 const SearchWorkout = () => {
   const [search, setSearch] = useState("");
@@ -12,24 +12,13 @@ const SearchWorkout = () => {
   };
 
   return (
-    <Stack alignItems="center" mt="37px" justifyContent="center" p="20px">
-      <Typography
-        fontWeight={700}
-        sx={{ fontSize: { lg: "44px", xs: "30px" } }}
-        mb="49px"
-        textAlign="center"
-      >
+    <div className="flex flex-col items-center mt-9 p-5">
+      <h1 className="text-center font-bold mb-12 text-4xl">
         Looking for <br /> a specific workout?
-      </Typography>
-      <Box position="relative" mb="72px">
-        <TextField
-          // height="76px"
-          sx={{
-            input: { fontWeight: "700", border: "none", borderRadius: "4px" },
-            width: { lg: "1170px", xs: "350px" },
-            backgroundColor: "#fff",
-            borderRadius: "40px",
-          }}
+      </h1>
+      <div className="relative w-full lg:w-[1170px] xs:w-[350px] flex items-center">
+        <input
+          className="w-full py-3 px-5 bg-white border-none rounded-l-full font-bold focus:outline-none"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value.toLowerCase());
@@ -37,25 +26,19 @@ const SearchWorkout = () => {
           placeholder="Search Exercises"
           type="text"
         />
-        <Button
-          className="search-btn"
-          sx={{
-            bgcolor: "#FF2625",
-            color: "#fff",
-            textTransform: "none",
-            width: { lg: "173px", xs: "80px" },
-            height: "56px",
-            position: "absolute",
-            right: "0px",
-            fontSize: { lg: "20px", xs: "14px" },
-          }}
+        <button
+          className="bg-red-600 text-white uppercase lg:w-[173px] xs:w-[80px] py-3 px-5 h-auto lg:text-lg xs:text-sm rounded-r-full transition duration-300 ease-in-out hover:bg-opacity-80"
           onClick={handleSearch}
         >
           Search
-        </Button>
-      </Box>
-      <Box sx={{ position: "relative", width: "100%", p: "20px" }}></Box>
-    </Stack>
+        </button>
+      </div>
+
+      <div className="relative w-full p-5"></div>
+      <div className="relative w-full p-5">
+        <HorizontalScrollbar />
+      </div>
+    </div>
   );
 };
 
