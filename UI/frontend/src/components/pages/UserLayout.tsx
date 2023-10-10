@@ -7,7 +7,7 @@ export function UserLayout() {
     <>
       <Sidebar />
       <div className="relative flex flex-grow items-center overflow-hidden justify-center rounded-xl bg-neutral-200">
-        <div className="w-full h-full flex items-center justify-center overscroll-contain overflow-auto p-4">
+        <div className="w-full h-full flex items-center justify-center overflow-x-hidden overscroll-contain overflow-auto p-4">
           <Outlet />
         </div>
       </div>
