@@ -14,14 +14,6 @@ function Sidebar() {
     sessionStorage.setItem("expandSidebar", JSON.stringify(expand));
   }, [expand]);
 
-  useEffect(() => {});
-  const selected =
-    Routes.find((value) => value.href === window.location.pathname) ??
-    Routes[0];
-  if (selected) {
-    selected.selected = true;
-  }
-
   return (
     <aside
       className={`relative transition-all ease-in-out duration-300 rounded-xl text-white left-0 mr-2 ${

@@ -3,6 +3,5 @@ export interface ISidebarItemModel {
   selectedIcon: JSX.Element;
   text: string;
   href?: string;
-  selected: boolean;
   needsLogin: boolean;
 }

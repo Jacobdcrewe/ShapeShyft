@@ -21,7 +21,6 @@ export const Routes: Array<ISidebarItemModel> = [
     selectedIcon: <HomeIconSelected className="w-full h-full" />,
     text: "Dashboard",
     href: "/user/dashboard",
-    selected: false,
     needsLogin: false,
   },
   {
@@ -29,7 +28,6 @@ export const Routes: Array<ISidebarItemModel> = [
     selectedIcon: <FireIconSelected className="w-full h-full" />,
     text: "Food and Calories",
     href: "/user/food-and-calories",
-    selected: false,
     needsLogin: false,
   },
   {
@@ -37,7 +35,6 @@ export const Routes: Array<ISidebarItemModel> = [
     selectedIcon: <HeartIconSelected className="w-full h-full" />,
     text: "Exercise",
     href: "/user/exercise",
-    selected: false,
     needsLogin: false,
   },
   {
@@ -45,7 +42,6 @@ export const Routes: Array<ISidebarItemModel> = [
     selectedIcon: <FaceIconSelected className="w-full h-full" />,
     text: "Health and Wellness",
     href: "/user/health-and-wellness",
-    selected: false,
     needsLogin: false,
   },
   {
@@ -53,7 +49,6 @@ export const Routes: Array<ISidebarItemModel> = [
     selectedIcon: <EyeDropperIconSelected className="w-full h-full" />,
     text: "Recipes",
     href: "/user/recipes",
-    selected: false,
     needsLogin: false,
   },
 ].filter((value: ISidebarItemModel) => {
