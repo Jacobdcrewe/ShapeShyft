@@ -10,7 +10,7 @@ import Recipes from "./pages/user/Recipes";
 
 export function ContentRouter() {
   return (
-    <BrowserRouter basename={`/${process.env.PUBLIC_URL}`}>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="*" element={<Navigate to="/" />} />
