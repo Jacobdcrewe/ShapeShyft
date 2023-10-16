@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/ShapeShyft/static/css/main.663c192d.css",
-    "main.js": "/ShapeShyft/static/js/main.2c7233a8.js",
-    "static/media/logo.svg": "/ShapeShyft/static/media/logo.40176f09470155c57b9fbc57f04c9aae.svg",
-    "index.html": "/ShapeShyft/index.html",
-    "main.663c192d.css.map": "/ShapeShyft/static/css/main.663c192d.css.map",
-    "main.2c7233a8.js.map": "/ShapeShyft/static/js/main.2c7233a8.js.map"
+    "main.css": "/static/css/main.663c192d.css",
+    "main.js": "/static/js/main.13fdca92.js",
+    "static/media/logo.svg": "/static/media/logo.40176f09470155c57b9fbc57f04c9aae.svg",
+    "index.html": "/index.html",
+    "main.663c192d.css.map": "/static/css/main.663c192d.css.map",
+    "main.13fdca92.js.map": "/static/js/main.13fdca92.js.map"
   },
   "entrypoints": [
     "static/css/main.663c192d.css",
-    "static/js/main.2c7233a8.js"
+    "static/js/main.13fdca92.js"
   ]
 }
