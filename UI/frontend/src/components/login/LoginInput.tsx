@@ -1,5 +1,6 @@
 import React from "react";
 import TextInput from "../common/TextInput";
+import PasswordInput from "../common/PasswordInput";
 
 export interface LoginInputProps {
   setUsername: React.SetStateAction<any>;
@@ -16,7 +17,7 @@ export const LoginInput = (props: LoginInputProps) => {
           props.setUsername(e.target.value);
         }}
       />
-      <TextInput
+      <PasswordInput
         placeholder="Password"
         id="password"
         onChange={(e: any) => {
