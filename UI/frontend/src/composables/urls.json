@@ -1,0 +1,4 @@
+{
+    "login": "https://api.shapeshyft.online/api/account/v1/auth/password",
+    "account": "https://api.shapeshyft.online/api/account/v1/user/"
+}

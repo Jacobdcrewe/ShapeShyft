@@ -4,6 +4,8 @@ import LoginInput from "../login/LoginInput";
 import SignUpInput from "../login/SignUpInput";
 import logo from "../../assets/images/logo.svg";
 import { useNavigate } from "react-router-dom";
+import { POST } from "../../composables/api";
+import urls from "../../composables/urls.json";
 
 export function Login() {
   const [username, setUsername] = useState("");
@@ -19,6 +21,26 @@ export function Login() {
 
   const navigate = useNavigate();
 
+  const signIn = async () => {
+    const data = {
+      password: password,
+      username: username,
+    };
+    console.log(await POST(urls.login, data));
+    //navigate("/user/dashboard")
+  };
+
+  const signUp = async () => {
+    const data = {
+      password: password,
+      phone_number: username,
+      email: email,
+      first_name: firstName,
+      last_name: lastName,
+    };
+    console.log(await POST(urls.account, data));
+  };
+
   useEffect(() => {
     sessionStorage.setItem("loggingIn", JSON.stringify(login));
   }, [login]);
@@ -30,7 +52,7 @@ export function Login() {
     setFirstName("");
     setLastName("");
   };
-  console.log(username, password, email, firstName, lastName);
+  //console.log(username, password, email, firstName, lastName);
   return (
     <div className="flex flex-grow items-center justify-center rounded-xl bg-gradient-to-t from-indigo-950 to-pink-950 overflow-hidden ">
       <div className="w-full h-full flex items-center justify-center overflow-x-hidden overscroll-contain overflow-auto p-4">
@@ -72,11 +94,7 @@ export function Login() {
 
               {login ? (
                 <div className="mt-auto w-full flex flex-col items-center justify-center gap-4">
-                  <LoginPageButton
-                    prompt="Login"
-                    id="login"
-                    onClick={() => navigate("/user/dashboard")}
-                  />
+                  <LoginPageButton prompt="Login" id="login" onClick={signIn} />
                   <div className="w-full flex justify-center items-center  text-neutral-400 gap-4">
                     <div className="w-1/3 bg-neutral-300 h-1 rounded-full" />
                     <p className="text-center mb-1">or</p>
@@ -96,7 +114,7 @@ export function Login() {
                   <LoginPageButton
                     prompt="Create Account"
                     id="createAccount"
-                    onClick={() => navigate("/user/dashboard")}
+                    onClick={signUp}
                   />
                   <div className="w-full flex justify-center items-center  text-neutral-400 gap-4">
                     <div className="w-1/3 bg-neutral-300 h-1 rounded-full" />
