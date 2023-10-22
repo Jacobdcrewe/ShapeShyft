@@ -1,9 +1,31 @@
-export async function GET(url: string, token: string): Promise<any> {
+import { ITokenModel } from "../models/ITokenModel";
+import file from "./urls.json";
+async function checkRefresh(token: ITokenModel): Promise<any> {
   try {
+    const val = JSON.parse(atob(token.refresh_token.split(".")[1]));
+    const expiration = val.exp ? val.exp * 1000 : 0;
+    console.log(
+      "Expiration Date: " + new Date(expiration),
+      "\nCurrent Date: " + new Date(Date.now())
+    );
+
+    if (expiration < Date.now()) {
+      console.log(
+        await POST(file.refresh_token, { refresh_token: token.refresh_token })
+      );
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export async function GET(url: string, token: ITokenModel): Promise<any> {
+  try {
+    checkRefresh(token);
     const headers: any = {};
 
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+    if (token != null) {
+      headers["Authorization"] = `${token.token_type} ${token.access_token}`;
     }
 
     const response = await fetch(url, {
@@ -25,7 +47,7 @@ export async function GET(url: string, token: string): Promise<any> {
 export async function POST(
   url: string,
   data: any,
-  token?: string
+  token?: ITokenModel
 ): Promise<any> {
   try {
     const headers: any = {
@@ -33,8 +55,8 @@ export async function POST(
       "Content-Type": "application/json",
     };
 
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+    if (token != null) {
+      headers["Authorization"] = `${token.token_type} ${token.access_token}`;
     }
     const response = await fetch(url, {
       method: "POST",
@@ -56,15 +78,15 @@ export async function POST(
 export async function PUT(
   url: string,
   data: any,
-  token?: string
+  token?: ITokenModel
 ): Promise<any> {
   try {
     const headers: any = {
       "Content-Type": "application/json",
     };
 
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+    if (token != null) {
+      headers["Authorization"] = `${token.token_type} ${token.access_token}`;
     }
 
     const response = await fetch(url, {

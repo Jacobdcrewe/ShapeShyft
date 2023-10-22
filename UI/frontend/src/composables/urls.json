@@ -1,4 +1,6 @@
 {
     "login": "https://api.shapeshyft.online/api/account/v1/auth/password",
-    "account": "https://api.shapeshyft.online/api/account/v1/user/"
+    "account": "https://api.shapeshyft.online/api/account/v1/user/",
+    "me": "https://api.shapeshyft.online/api/account/v1/user/me",
+    "refresh_token": "https://api.shapeshyft.online/api/account/v1/auth/refresh"
 }

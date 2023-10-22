@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { LoginPageButton } from "../login/LoginPageButton";
 import LoginInput from "../login/LoginInput";
 import SignUpInput from "../login/SignUpInput";
@@ -6,31 +6,53 @@ import logo from "../../assets/images/logo.svg";
 import { useNavigate } from "react-router-dom";
 import { POST } from "../../composables/api";
 import urls from "../../composables/urls.json";
+import { UserContext } from "../ContentRouter";
+import Loading from "../common/Loading";
 
 export function Login() {
+  const { login, setLogin } = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  const [login, setLogin] = useState(() => {
+  const [isLogginIn, setLoggingIn] = useState(() => {
     const setSize = sessionStorage.getItem("loggingIn");
     return JSON.parse(setSize!) ?? true;
   });
 
+  useEffect(() => {
+    sessionStorage.setItem("loggingIn", JSON.stringify(isLogginIn));
+  }, [isLogginIn]);
+
   const navigate = useNavigate();
 
-  const signIn = async () => {
+  async function signIn() {
+    setLoading(true);
     const data = {
       password: password,
       username: username,
     };
-    console.log(await POST(urls.login, data));
-    //navigate("/user/dashboard")
-  };
+    try {
+      const token_vals = await POST(urls.login, data);
+      console.log(token_vals);
+      if (token_vals.success) {
+        setLoading(false);
+        setLogin(token_vals);
+        navigate("/user/dashboard");
+      }
+    } catch (e) {
+      setLoading(false);
+      setError("Incorrect Username or Password");
+      console.error("Error logging in: ", e);
+    }
+  }
 
-  const signUp = async () => {
+  async function signUp() {
+    setLoading(true);
     const data = {
       password: password,
       phone_number: username,
@@ -38,14 +60,22 @@ export function Login() {
       first_name: firstName,
       last_name: lastName,
     };
-    console.log(await POST(urls.account, data));
-  };
-
-  useEffect(() => {
-    sessionStorage.setItem("loggingIn", JSON.stringify(login));
-  }, [login]);
+    try {
+      const user = await POST(urls.account, data);
+      if (user.success) {
+        setLoading(false);
+        setLoggingIn(true);
+        setError("");
+      }
+    } catch (e) {
+      setLoading(false);
+      setError("Username/Email already is linked to an account.");
+      console.error("Error creating acount: ", e);
+    }
+  }
 
   const clearForm = () => {
+    setError("");
     setUsername("");
     setPassword("");
     setEmail("");
@@ -70,31 +100,32 @@ export function Login() {
 
           <div
             className={`relative p-10 w-full ${
-              login ? "min-h-[472px] h-[472px]" : "min-h-[624px] h-[624px]"
+              isLogginIn ? "min-h-[472px] h-[472px]" : "min-h-[624px] h-[624px]"
             } flex flex-col bg-neutral-100 rounded-xl overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.8)] transition-all ease-in-out duration-300`}
           >
-            <h1 className="text-2xl font-semibold mb-10">
-              {login ? "Login" : "Sign Up"}
-            </h1>
-            <div className="flex flex-col flex-grow gap-10 text-xl">
-              {login ? (
+            <div className="h-[72px] max-h-[72px] min-h-[72px] flex flex-col">
+              <h1 className="text-2xl font-semibold">
+                {isLogginIn ? "Login" : "Sign Up"}
+              </h1>
+              <p className="text-red-500 mt-auto">{error}</p>
+            </div>
+            {isLogginIn ? (
+              <form
+                className="flex flex-col flex-grow gap-10 text-xl"
+                onSubmit={async (event) => {
+                  event.preventDefault();
+                  await signIn();
+                }}
+              >
                 <LoginInput
                   setUsername={setUsername}
                   setPassword={setPassword}
                 />
-              ) : (
-                <SignUpInput
-                  setUsername={setUsername}
-                  setPassword={setPassword}
-                  setEmail={setEmail}
-                  setFirstName={setFirstName}
-                  setLastName={setLastName}
-                />
-              )}
-
-              {login ? (
                 <div className="mt-auto w-full flex flex-col items-center justify-center gap-4">
-                  <LoginPageButton prompt="Login" id="login" onClick={signIn} />
+                  <LoginPageButton
+                    prompt={loading ? <Loading /> : "Login"}
+                    id="login"
+                  />
                   <div className="w-full flex justify-center items-center  text-neutral-400 gap-4">
                     <div className="w-1/3 bg-neutral-300 h-1 rounded-full" />
                     <p className="text-center mb-1">or</p>
@@ -104,17 +135,31 @@ export function Login() {
                     prompt="Sign Up"
                     id="signup"
                     onClick={() => {
-                      setLogin(false);
+                      setLoggingIn(false);
                       clearForm();
                     }}
                   />
                 </div>
-              ) : (
+              </form>
+            ) : (
+              <form
+                className="flex flex-col flex-grow gap-10 text-xl"
+                onSubmit={async (event) => {
+                  event.preventDefault();
+                  await signUp();
+                }}
+              >
+                <SignUpInput
+                  setUsername={setUsername}
+                  setPassword={setPassword}
+                  setEmail={setEmail}
+                  setFirstName={setFirstName}
+                  setLastName={setLastName}
+                />
                 <div className="sticky bottom-0 mt-auto w-full flex flex-col items-center justify-center gap-4">
                   <LoginPageButton
-                    prompt="Create Account"
+                    prompt={loading ? <Loading /> : "Create Account"}
                     id="createAccount"
-                    onClick={signUp}
                   />
                   <div className="w-full flex justify-center items-center  text-neutral-400 gap-4">
                     <div className="w-1/3 bg-neutral-300 h-1 rounded-full" />
@@ -124,13 +169,13 @@ export function Login() {
                   <LoginPageButton
                     prompt="Login"
                     onClick={() => {
-                      setLogin(true);
+                      setLoggingIn(true);
                       clearForm();
                     }}
                   />
                 </div>
-              )}
-            </div>
+              </form>
+            )}
           </div>
         </div>
       </div>

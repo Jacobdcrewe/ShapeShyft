@@ -16,6 +16,7 @@ export const LoginInput = (props: LoginInputProps) => {
         onChange={(e: any) => {
           props.setUsername(e.target.value);
         }}
+        required={true}
       />
       <PasswordInput
         placeholder="Password"
@@ -23,6 +24,7 @@ export const LoginInput = (props: LoginInputProps) => {
         onChange={(e: any) => {
           props.setPassword(e.target.value);
         }}
+        required={true}
       />
     </div>
   );
