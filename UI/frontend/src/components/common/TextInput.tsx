@@ -5,6 +5,8 @@ export interface TextInputProps {
   id?: string;
   name?: string;
   onChange?: (e: any) => void;
+  required?: boolean;
+  autocomplete?: string;
 }
 
 export const TextInput = (props: TextInputProps) => {
@@ -16,7 +18,8 @@ export const TextInput = (props: TextInputProps) => {
       name={props.name}
       type="text"
       onChange={props.onChange}
-      autoComplete="false"
+      autoComplete={props.autocomplete}
+      required={props.required ?? false}
     />
   );
 };

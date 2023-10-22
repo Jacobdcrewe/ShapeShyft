@@ -5,6 +5,8 @@ export interface EmailInputProps {
   id?: string;
   name?: string;
   onChange?: (e: any) => void;
+  required?: boolean;
+  autocomplete?: string;
 }
 
 export const EmailInput = (props: EmailInputProps) => {
@@ -16,7 +18,8 @@ export const EmailInput = (props: EmailInputProps) => {
       name={props.name}
       type="email"
       onChange={props.onChange}
-      autoComplete="false"
+      autoComplete={props.autocomplete}
+      required={props.required ?? false}
     />
   );
 };
