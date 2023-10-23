@@ -14,7 +14,7 @@ export interface SignUpInputProps {
 export const SignUpInput = (props: SignUpInputProps) => {
   return (
     <div className="flex flex-col gap-4 md:gap-8">
-      <div className="flex flex-col md:flex-row w-full overflow-hidden gap-4">
+      <div className="flex flex-col md:flex-row w-full gap-4">
         <div className="md:w-1/2 ">
           <TextInput
             placeholder="First Name"
@@ -22,6 +22,8 @@ export const SignUpInput = (props: SignUpInputProps) => {
             onChange={(e: any) => {
               props.setFirstName(e.target.value);
             }}
+            required={true}
+            autocomplete="off"
           />
         </div>
         <div className="md:w-1/2 ">
@@ -31,6 +33,8 @@ export const SignUpInput = (props: SignUpInputProps) => {
             onChange={(e: any) => {
               props.setLastName(e.target.value);
             }}
+            required={true}
+            autocomplete="off"
           />
         </div>
       </div>
@@ -40,6 +44,8 @@ export const SignUpInput = (props: SignUpInputProps) => {
         onChange={(e: any) => {
           props.setEmail(e.target.value);
         }}
+        required={true}
+        autocomplete="off"
       />
       <TextInput
         placeholder="Username"
@@ -47,6 +53,8 @@ export const SignUpInput = (props: SignUpInputProps) => {
         onChange={(e: any) => {
           props.setUsername(e.target.value);
         }}
+        required={true}
+        autocomplete="new-username"
       />
       <PasswordInput
         placeholder="Password"
@@ -54,6 +62,8 @@ export const SignUpInput = (props: SignUpInputProps) => {
         onChange={(e: any) => {
           props.setPassword(e.target.value);
         }}
+        required={true}
+        autocomplete="new-password"
       />
     </div>
   );
