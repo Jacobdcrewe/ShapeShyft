@@ -1,10 +1,13 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { ISidebarItemModel } from "../../models/ISidebarItemModel";
 import SidebarItem from "./SidebarItem";
 import Routes from "../Routes";
+import { UserContext } from "../ContentRouter";
 
 function Sidebar() {
+  const { setLogin } = useContext(UserContext);
+
   const [expand, setExpand] = useState(() => {
     const setSize = sessionStorage.getItem("expandSidebar");
     return JSON.parse(setSize!) ?? true;
@@ -38,6 +41,11 @@ function Sidebar() {
           <SidebarItem item={value} expand={expand} />
         </div>
       ))}
+      <div className="w-full mt-auto bottom-0">
+        <button className="h-16 w-full rounded-xl bg-stone-900" onClick={() => {setLogin(""); localStorage.removeItem('userLogin')}} >
+          Logout
+        </button>
+      </div>
     </aside>
   );
 }
