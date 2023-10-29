@@ -1,14 +1,15 @@
+import React from "react";
 import { FoodItemProps } from "../pages/user/FoodAndCalories";
-// food item component
+
 export const FoodItem = (props: FoodItemProps) => {
     return (
-        <div className="flex border-t border-b border-neutral-400 bg">
+        <div className="flex items-center justify-between bg-white p-3 rounded-lg shadow-md my-2">
             <div className="flex flex-col">
-                <p>{props.name}</p>
-                <p>{props.amount} {props.unit}</p>
+                <p className="text-lg font-semibold">{props.name}</p>
+                <p className="text-sm text-gray-500">{props.amount} {props.unit}</p>
             </div>
-            <div className="flex items-center ml-auto">
-                {props.calories}
+            <div className="text-violet-800 font-bold">
+                {props.calories} cal
             </div>
         </div>
     );
