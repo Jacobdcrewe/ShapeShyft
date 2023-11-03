@@ -20,7 +20,7 @@ export const PasswordInput = (props: PasswordInputProps) => {
   return (
     <div className="w-full flex h-[44px] rounded-full bg-white px-4 py-2 shadow-[inset_0_0_4px_rgba(0,0,0,0.2)] select-within:bg-black outline-none ring-none focus-within:ring focus-within:ring-2 focus-within:outline-1 focus-within:outline focus-within:outline-white focus-within:ring-white">
       <input
-        className="outline-none ring-none pr-2 flex-grow"
+        className="outline-none ring-none pr-2 grow min-w-0"
         placeholder={props.placeholder}
         id={props.id}
         name={props.name}
