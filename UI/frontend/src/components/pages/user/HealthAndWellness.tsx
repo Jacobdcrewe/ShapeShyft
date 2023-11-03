@@ -1,130 +1,37 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { UserContext } from "../../ContentRouter";
+import { GET } from "../../../composables/api";
+import file from "../../../composables/urls.json";
 
-export function HealthAndWellness() {
-  // State for counters
-  const [waterCount, setWaterCount] = useState(0);
-  const [foodCount, setFoodCount] = useState(0);
-  const [exerciseCount, setExerciseCount] = useState(0);
+export function Dashboard() {
+  const [user, setUser] = useState("(example of making api call) click me!");
+  const { login } = useContext(UserContext);
 
-  // State for user information
-  const [weight, setWeight] = useState(0);
-  const [height, setHeight] = useState(0);
-
-  // Calculate BMI
-  const calculateBMI = () => {
-    if (weight <= 0 || height <= 0) {
-      return "N/A";
-    }
-    const bmi = weight / (height * height * 0.0001); // Adjusting for pounds and inches
-    return bmi.toFixed(2);
+  const exampleFunction = async () => {
+    const val = await GET(file.me, login);
+    setUser(JSON.stringify(val));
   };
-
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-semibold mb-4">Health and Wellness</h1>
-
-      {/* First Section - Counters */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Track Your Health</h2>
-        <div className="flex items-center mb-2">
-          <p className="w-1/4">Water (Glasses)</p>
-          <button
-            className={`${
-              waterCount <= 0
-                ? "bg-gray-400 text-gray-200"
-                : "bg-blue-500 text-white"
-            } px-2 py-1 rounded-full mr-2`}
-            onClick={() => setWaterCount(waterCount - 1)}
-            disabled={waterCount <= 0}
-          >
-            -
-          </button>
-          <span className="w-1/4 text-center">{waterCount}</span>
-          <button
-            className="bg-blue-500 text-white px-2 py-1 rounded-full ml-2"
-            onClick={() => setWaterCount(waterCount + 1)}
-          >
-            +
-          </button>
+    <div className="w-full h-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="rounded-xl md:col-span-2 h-40 px-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] ">
+          <p className="text-3xl">Calories</p>
         </div>
-
-        <div className="flex items-center mb-2">
-          <p className="w-1/4">Excersize (hrs)</p>
-          <button
-            className={`${
-              exerciseCount <= 0
-                ? "bg-gray-400 text-gray-200"
-                : "bg-blue-500 text-white"
-            } px-2 py-1 rounded-full mr-2`}
-            onClick={() => setExerciseCount(exerciseCount - 0.25)}
-            disabled={exerciseCount <= 0}
-          >
-            -
-          </button>
-          <span className="w-1/4 text-center">{exerciseCount}</span>
-          <button
-            className="bg-blue-500 text-white px-2 py-1 rounded-full ml-2"
-            onClick={() => setExerciseCount(exerciseCount + 0.25)}
-          >
-            +
-          </button>
+        <div className="rounded-xl h-32 px-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] ">
+          <p className="text-3xl">Exercise</p>
         </div>
-
-        <div className="flex items-center mb-2">
-          <p className="w-1/4">Food (Calories)</p>
-          <button
-            className={`${
-              foodCount <= 0
-                ? "bg-gray-400 text-gray-200"
-                : "bg-blue-500 text-white"
-            } px-2 py-1 rounded-full mr-2`}
-            onClick={() => setFoodCount(foodCount - 1)}
-            disabled={foodCount <= 0}
-          >
-            -
-          </button>
-          <span className="w-1/4 text-center">{foodCount}</span>
-          <button
-            className="bg-blue-500 text-white px-2 py-1 rounded-full ml-2"
-            onClick={() => setFoodCount(foodCount + 1)}
-          >
-            +
-          </button>
+        <div className="rounded-xl h-32 px-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] ">
+          <p className="text-3xl">Sleep/Water?</p>
         </div>
-      </section>
-
-      {/* Second Section - User Information */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">User Information</h2>
-        <div className="mb-4">
-          <p className="w-1/4">Weight (Kg)</p>
-          <input
-            min="0"
-            type="number"
-            value={weight}
-            onChange={(e) => setWeight(parseInt(e.target.value))}
-            className="w-1/4 border border-gray-300 rounded p-2"
-          />
+        <div
+          className="rounded-xl h-32 px-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] hover:cursor-pointer md:col-span-2"
+          onClick={exampleFunction}
+        >
+          <p>{user}</p>
         </div>
-        <div className="mb-4">
-          <p className="w-1/4">Height (cm)</p>
-          <input
-            min="0"
-            type="number"
-            value={height}
-            onChange={(e) => setHeight(parseInt(e.target.value))}
-            className="w-1/4 border border-gray-300 rounded p-2"
-          />
-        </div>
-        <div>
-          <p className="w-1/4">BMI</p>
-          <span className="w-1/4 border border-gray-300 rounded p-2">
-            {calculateBMI()}
-          </span>
-        </div>
-      </section>
+      </div>
     </div>
   );
 }
 
-export default HealthAndWellness;
+export default Dashboard;
