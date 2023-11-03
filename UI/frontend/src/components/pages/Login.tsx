@@ -10,7 +10,7 @@ import { UserContext } from "../ContentRouter";
 import Loading from "../common/Loading";
 
 export function Login() {
-  const { login, setLogin } = useContext(UserContext);
+  const { setLogin } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [username, setUsername] = useState("");
