@@ -30,14 +30,16 @@ export function Dashboard() {
         <div className="rounded-xl p-4 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] col-span-1 md:col-span-2 xl:col-span-1 min-h-[270px]">
           <ExerciseSection />
         </div>
-        <div className="rounded-xl h-32 p-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] col-span-1 md:col-span-2 xl:col-span-1">
-          <HealthandWellnessSection />
-        </div>
-        <div
-          className="rounded-xl h-32 p-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] hover:cursor-pointer md:col-span-2"
-          onClick={exampleFunction}
-        >
-          <p>{exuser}</p>
+        <div className="flex flex-grow flex-col gap-5">
+          <div className="rounded-xl h-32 p-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] col-span-1 md:col-span-2 xl:col-span-1">
+            <HealthandWellnessSection />
+          </div>
+          <div
+            className="rounded-xl h-32 p-4 py-2 bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.2)] hover:cursor-pointer overscroll-contain overflow-auto"
+            onClick={exampleFunction}
+          >
+            <p>{exuser}</p>
+          </div>
         </div>
       </div>
     </div>
