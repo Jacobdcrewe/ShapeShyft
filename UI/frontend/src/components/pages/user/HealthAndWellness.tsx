@@ -46,17 +46,18 @@ export function HealthAndWellness() {
   };
 
   // Placeholder for personalized health tips fetched from the backend
-  const [personalizedHealthTips, setPersonalizedHealthTips] = useState("");
+  const [personalizedHealthTips, setPersonalizedHealthTips] = useState('');
+
 
   interface WaterTrackerMessageProps {
     waterCount: number;
   }
 
-  <br></br>;
+  <br></br>
   function WaterTrackerMessage({ waterCount }: WaterTrackerMessageProps) {
     let message = "";
-
-    switch (waterCount) {
+  
+    switch(waterCount) {
       case 0:
         message = "Let's start the day by drinking some water";
         break;
@@ -82,8 +83,7 @@ export function HealthAndWellness() {
         message = "One more to go! Couldn't be more proud";
         break;
       case 8:
-        message =
-          "Perfect, you made it! Congrats for keeping healthy and hydrated";
+        message = "Perfect, you made it! Congrats for keeping healthy and hydrated";
         break;
       default:
         if (waterCount > 8) {
@@ -91,7 +91,7 @@ export function HealthAndWellness() {
         }
         break;
     }
-
+  
     return <p>{message}</p>;
   }
 
@@ -129,14 +129,8 @@ export function HealthAndWellness() {
     const fetchPersonalizedHealthTips = async () => {
       try {
         // Simulated fetch request
-        const response = await new Promise((resolve) =>
-          setTimeout(
-            () =>
-              resolve({
-                data: "Your personalized health and fitness tips will appear here.",
-              }),
-            1000
-          )
+        const response = await new Promise(resolve => 
+          setTimeout(() => resolve({ data: "Your personalized health and fitness tips will appear here." }), 1000)
         );
         setPersonalizedHealthTips(file.me);
       } catch (error) {
@@ -213,16 +207,19 @@ export function HealthAndWellness() {
 
   return (
     <div className="container mx-auto p-8 bg-gray-100">
-      <h1 className="text-4xl font-semibold mb-6 text-blue-700">
+      <h1 className="text-4xl font-semibold mb-6 text-black-700">
         Health and Wellness
       </h1>
+    
       <div className="bg-white p-6 rounded-md shadow-md">
         {/* First Section - Counters */}
         <section className="mb-8 border-b pb-6">
-          <h2 className="text-3xl font-semibold mb-4 text-blue-600">
+          <h2 className="text-4xl font-semibold mb-4 text-blue-600">
             Track Your Health
           </h2>
+          <h3 className="text-2xl font-semibold mb-4 text-blue-600">Water Tracker </h3>
           <div className="flex items-center mb-4 space-x-4">
+          
             <p className="w-1/4 text-lg">Water (Glasses)</p>
             <button
               className={`${
@@ -256,6 +253,7 @@ export function HealthAndWellness() {
 
         <section className="mb-8 border-b pb-6">
           <div className="mb-4">
+          <h3 className="text-2xl font-semibold mb-4 text-blue-600">Sleep Tracker </h3>
             <p className="w-1/4">Sleep Start Time</p>
             <input
               type="time"
@@ -327,28 +325,23 @@ export function HealthAndWellness() {
             />
           </div>
         </section>
-      </div>
-      <div className="container mx-auto p-4">
-
+        </div>
+        <div>
         {/* New Section for Personalized Health & Fitness Tips */}
-        <section className="my-10 p-6 bg-white rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-blue-600">
-            Personalized Health & Fitness Tips
-          </h2>
-          <div className="space-y-4">
-            {personalizedHealthTips ? (
-              <p className="text-gray-700">{personalizedHealthTips}</p>
-            ) : (
-              <p className="text-gray-500">Loading your personalized tips...</p>
-            )}
-            {/* More space for additional info */}
-          </div>
-        </section>
-
-        {/* ... existing JSX ... */}
+      <section className="my-10 p-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-semibold mb-4 text-blue-600">Personalized Health & Fitness Tips</h2>
+        <div className="space-y-4">
+          {personalizedHealthTips ? (
+            <p className="text-gray-700">{personalizedHealthTips}</p>
+          ) : (
+            <p className="text-gray-500">Loading your personalized tips...</p>
+          )}
+          {/* More space for additional info */}
+        </div>
+      </section>
       </div>
-      );
     </div>
+    
   );
 }
 
