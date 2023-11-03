@@ -60,19 +60,18 @@ function Sidebar(props: any) {
           </div>
         ))}
         <div className="w-full mt-auto bottom-0">
-          <button
-            className="h-16 w-full rounded-xl bg-stone-900"
-            onClick={() => {
+          <SidebarItem
+            item={logoutItem}
+            handleClick={() => {
               setLogin("");
               localStorage.removeItem("userLogin");
             }}
-          >
-            Logout
-          </button>
+            expand={expand}
+          />
         </div>
       </aside>
       <aside
-        className={`order-2 transition-all ease-in-out duration-300 rounded-xl text-white bottom-0 mt-1 flex-none w-full bg-stone-950 overflow-hidden flex grid grid-cols-6 gap-1 place-items-center max-h-26 items-center justify-center md:hidden p-4`}
+        className={`order-2 transition-all ease-in-out duration-300 rounded-xl text-white bottom-0 mt-1 flex-none w-full bg-stone-950 overflow-hidden flex grid grid-cols-6 gap-3 place-items-center max-h-26 items-center justify-center md:hidden p-4`}
       >
         {Routes.map((value: ISidebarItemModel) => (
           <div className="aspect-square h-full m-2 max-h-16" key={value.href}>
