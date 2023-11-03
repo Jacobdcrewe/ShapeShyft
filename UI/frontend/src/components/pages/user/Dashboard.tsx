@@ -30,9 +30,9 @@ export function Dashboard() {
     const fetchData = async () => {
       const val = await GET(file.me, login);
       setUser(val);
+      setLoading(false);
     };
     fetchData();
-    setLoading(false);
   }, [login]);
 
   let caloryItem = {
@@ -64,34 +64,45 @@ export function Dashboard() {
     },
   ];
   const COLORS = ["rgb(109 40 217)", "rgb(190 18 60)"];
-  //https://recharts.org/en-US/examples/CustomActiveShapePieChart
 
   return (
     <div className="w-full h-full min-w-[330px] overscroll-x-contain">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="rounded-xl p-4 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] md:col-span-2">
-          {loading ? (
-            <div className="flex w-full h-full items-center justify-center">
-              <Loading />
-            </div>
-          ) : (
-            <div className="flex flex-col sm:flex-row flex-wrap h-full gap-y-2 gap-x-8 text-lg sm:text-3xl">
-              <div className="flex items-center">
-                <FingerPrintIcon className="aspect-square h-6 w-6 mr-3 flex-none text-violet-700" />
+          <div className="flex flex-col sm:flex-row flex-wrap h-full sm:gap-y-1 gap-x-8 text-lg sm:text-3xl">
+            <div className="flex items-center min-h-[50px] min-w-[200px]">
+              <FingerPrintIcon className="aspect-square h-6 w-6 mr-3 flex-none text-violet-700" />
+              {loading ? (
+                <div className="mb-2">
+                  <Loading />
+                </div>
+              ) : (
                 <p>
                   {user.first_name} {user.last_name}
                 </p>
-              </div>
-              <div className="flex items-center">
-                <UserIcon className="aspect-square h-6 w-6 mr-3 flex-none text-violet-700" />
-                <p>{user.phone_number}</p>
-              </div>
-              <div className="flex items-center">
-                <EnvelopeIcon className="aspect-square flex-none h-6 w-6 mr-3 mt-2 text-violet-700" />
-                <p>{user.email}</p>
-              </div>
+              )}
             </div>
-          )}
+            <div className="flex items-center min-h-[50px] min-w-[200px]">
+              <UserIcon className="aspect-square h-6 w-6 mr-3 flex-none text-violet-700" />
+              {loading ? (
+                <div className="mb-2">
+                  <Loading />
+                </div>
+              ) : (
+                <p>{user.phone_number}</p>
+              )}
+            </div>
+            <div className="flex items-center min-h-[50px] min-w-[200px]">
+              <EnvelopeIcon className="aspect-square flex-none h-6 w-6 mr-3 mt-2 text-violet-700" />
+              {loading ? (
+                <div className="mb-2">
+                  <Loading />
+                </div>
+              ) : (
+                <p>{user.email}</p>
+              )}
+            </div>
+          </div>
         </div>
         <div className="rounded-xl col-span-1 md:col-span-2 p-4 bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.2)] flex flex-col md:flex-row flex-wrap ">
           <div className="w-full md:w-auto flex items-center justify-center mr-10">
