@@ -24,7 +24,7 @@ export function ExerciseSection() {
   }
 
   return (
-    <div>
+    <div className="w-full">
       <p className="px-8 mb-3 text-3xl">Hours of Exercise in the Past Week</p>
       <ResponsiveContainer width="100%" height="100%" className="min-h-[270px]">
         <LineChart
