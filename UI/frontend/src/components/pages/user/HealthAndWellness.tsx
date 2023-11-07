@@ -7,13 +7,13 @@ import "./HealthAndWellness.css";
 
 export function HealthAndWellness() {
   // For the API
-  //const [user, setUser] = useState("(example of making api call) click me!");
+  const [user, setUser] = useState("(example of making api call) click me!");
   const { login } = useContext(UserContext);
 
   // State for counters
   const [waterCount, setWaterCount] = useState(0);
-  //const [foodCount, setFoodCount] = useState(0);
-  // const [exerciseCount, setExerciseCount] = useState(0);
+  const [foodCount, setFoodCount] = useState(0);
+  const [exerciseCount, setExerciseCount] = useState(0);
 
   // State for Sleep Start and End
   const [sleepStart, setSleepStart] = useState("");
@@ -31,6 +31,18 @@ export function HealthAndWellness() {
     }
     const bmi = weight / (height * height * 0.0001); // Adjusting for pounds and inches
     return bmi.toFixed(2);
+  };
+
+  // Reminder logic for water consumption
+  const checkWaterIntake = () => {
+    const currentHour = new Date().getHours();
+    if (currentHour >= 8 && currentHour <= 23) {
+      const hoursPassed = currentHour - 8;
+      const glassesShouldHaveDrunk = Math.floor(hoursPassed / 3);
+      if (waterCount < glassesShouldHaveDrunk) {
+        alert("Remember to drink more water!");
+      }
+    }
   };
 
   // Placeholder for personalized health tips fetched from the backend
@@ -85,65 +97,31 @@ export function HealthAndWellness() {
 
   useEffect(() => {
     // Fetch water count from the backend when the component is mounted
-    const GetWaterCount = async () => {
-      try {
-        const val = await GET(file.me, login);
-        if (val && val.waterCount !== undefined) {
-          setWaterCount(val.waterCount);
-        }
-      } catch (e) {
-        console.error("Error: fetching water count from backend failed.", e);
-      }
-    };
     GetWaterCount();
 
     // Check every hour
     const interval = setInterval(() => {
-      // Reminder logic for water consumption
-      const checkWaterIntake = () => {
-        const currentHour = new Date().getHours();
-        if (currentHour >= 8 && currentHour <= 23) {
-          const hoursPassed = currentHour - 8;
-          const glassesShouldHaveDrunk = Math.floor(hoursPassed / 3);
-          if (waterCount < glassesShouldHaveDrunk) {
-            alert("Remember to drink more water!");
-          }
-        }
-      };
-
       checkWaterIntake();
     }, 3600000); // Check every hour (3600000 milliseconds)
 
     return () => clearInterval(interval); // Clean up the interval on component unmount
-  }, [waterCount, login]);
+  }, [waterCount]);
 
   useEffect(() => {
-    const calculateSleepDuration = () => {
-      if (sleepStart && sleepEnd) {
-        const startTime: Date = new Date(`01/01/2000 ${sleepStart}`);
-        const endTime: Date = new Date(`01/01/2000 ${sleepEnd}`);
-
-        // Check if the dates are valid
-        if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-          return ""; // Return empty string or handle invalid date
-        }
-
-        if (endTime < startTime) {
-          // Assumes sleep went overnight to the next day
-          endTime.setDate(endTime.getDate() + 1);
-        }
-
-        const duration = endTime.getTime() - startTime.getTime();
-        const hours = Math.floor(duration / 3600000); // convert milliseconds to hours
-        const minutes = Math.floor((duration % 3600000) / 60000); // remaining milliseconds to minutes
-
-        return `${hours} hours and ${minutes} minutes`;
-      }
-      return "";
-    };
     const duration = calculateSleepDuration();
     setSleepDuration(duration);
   }, [sleepStart, sleepEnd]);
+
+  const GetWaterCount = async () => {
+    try {
+      const val = await GET(file.me, login);
+      if (val && val.waterCount !== undefined) {
+        setWaterCount(val.waterCount);
+      }
+    } catch (e) {
+      console.error("Error: fetching water count from backend failed.", e);
+    }
+  };
 
   // Fetching data from the backend
   useEffect(() => {
@@ -151,9 +129,15 @@ export function HealthAndWellness() {
     const fetchPersonalizedHealthTips = async () => {
       try {
         // Simulated fetch request
-        /*const response = await new Promise(resolve => 
-          setTimeout(() => resolve({ data: "Your personalized health and fitness tips will appear here." }), 1000)
-        ); */
+        const response = await new Promise((resolve) =>
+          setTimeout(
+            () =>
+              resolve({
+                data: "Your personalized health and fitness tips will appear here.",
+              }),
+            1000
+          )
+        );
         setPersonalizedHealthTips(file.me);
       } catch (error) {
         console.error("Error fetching personalized health tips: ", error);
@@ -201,6 +185,30 @@ export function HealthAndWellness() {
     } catch (e) {
       console.error("Error posting sleep data:", e);
     }
+  };
+
+  const calculateSleepDuration = () => {
+    if (sleepStart && sleepEnd) {
+      const startTime: Date = new Date(`01/01/2000 ${sleepStart}`);
+      const endTime: Date = new Date(`01/01/2000 ${sleepEnd}`);
+
+      // Check if the dates are valid
+      if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+        return ""; // Return empty string or handle invalid date
+      }
+
+      if (endTime < startTime) {
+        // Assumes sleep went overnight to the next day
+        endTime.setDate(endTime.getDate() + 1);
+      }
+
+      const duration = endTime.getTime() - startTime.getTime();
+      const hours = Math.floor(duration / 3600000); // convert milliseconds to hours
+      const minutes = Math.floor((duration % 3600000) / 60000); // remaining milliseconds to minutes
+
+      return `${hours} hours and ${minutes} minutes`;
+    }
+    return "";
   };
 
   return (
