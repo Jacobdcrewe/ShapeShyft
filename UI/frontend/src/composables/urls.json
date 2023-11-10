@@ -2,5 +2,6 @@
     "login": "https://api.shapeshyft.online/api/account/v1/auth/password",
     "account": "https://api.shapeshyft.online/api/account/v1/user/",
     "me": "https://api.shapeshyft.online/api/account/v1/user/me",
-    "refresh_token": "https://api.shapeshyft.online/api/account/v1/auth/refresh"
+    "refresh_token": "https://api.shapeshyft.online/api/account/v1/auth/refresh",
+    "get_water": "https://api.shapeshyft.online/api/v1/health/getWater"
 }
