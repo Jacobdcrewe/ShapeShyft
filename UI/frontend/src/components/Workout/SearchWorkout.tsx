@@ -12,8 +12,8 @@ const SearchWorkout = () => {
   };
 
   return (
-    <div className="flex flex-col items-center mt-9 p-5">
-      <h1 className="text-center font-bold mb-12 text-5xl">
+    <div className="flex flex-col items-center mt-2 p-5">
+      <h1 className="text-center font-bold mb-12 text-5xl mt-16">
         Let's Workout!
       </h1>
       <div className="relative w-full lg:w-[1170px] xs:w-[350px] flex items-center">

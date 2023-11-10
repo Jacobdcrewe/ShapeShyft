@@ -23,7 +23,7 @@ const Welcome = () => {
   }, [login]);
 
   return (
-    <div className="absolute top-0 left-16 mt-12 mb-8">
+    <div className="">
       <p className="text-6xl font-bold">
         {firstName ? <p>Hi, {firstName}!</p> : <p>Hello!</p>}
       </p>

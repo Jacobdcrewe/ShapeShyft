@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../ContentRouter";
 import { GET } from "../../../composables/api";
 import file from "../../../composables/urls.json";
@@ -13,11 +13,27 @@ export function Dashboard() {
     "(example of making api call) click me!"
   );
 
+  const [waterAmount, setWaterAmount] = useState(0);
+
   const { login } = useContext(UserContext);
   const exampleFunction = async () => {
     const val = await GET(file.me, login);
     setExUser(JSON.stringify(val));
   };
+
+  useEffect(() => {
+    const getWater = async () => {
+      const water = await GET(file.get_water, login);
+
+      const today = new Date().toISOString().split("T")[0];
+      const val = water.find((item: any) => {
+        return new Date(item.date).toISOString().split("T")[0] === today;
+      });
+      setWaterAmount(val.amt);
+    };
+
+    getWater();
+  }, [login]);
 
   return (
     <div className="w-full h-full min-w-[330px] overscroll-x-contain">
@@ -33,7 +49,7 @@ export function Dashboard() {
         </div>
         <div className="rounded-xl p-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] col-span-1  flex items-center justify-evenly flex-wrap xl:flex-nowrap">
           <HealthSection
-            actual={Math.round(Math.random() * 8)}
+            actual={waterAmount}
             recommended={8}
             prompt="Glasses of Water Today"
             usedColor="rgb(2 132 199)"

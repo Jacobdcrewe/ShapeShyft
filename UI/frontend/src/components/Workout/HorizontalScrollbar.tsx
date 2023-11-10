@@ -6,11 +6,12 @@ interface BodyPart {
 }
 
 const bodyParts: BodyPart[] = [
-  { id: 1, name: "Head" },
-  { id: 2, name: "Shoulders" },
+  { id: 1, name: "Arms" },
+  { id: 2, name: "Abs" },
   { id: 3, name: "Legs" },
   { id: 4, name: "Chest" },
-  { id: 5, name: "Back" }
+  { id: 5, name: "Back" },
+  { id: 6, name: "Cardio" }
 ];
 
 const HorizontalScrollbar: React.FC = () => {
