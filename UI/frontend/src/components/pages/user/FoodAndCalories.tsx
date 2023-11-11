@@ -114,7 +114,7 @@ export function FoodAndCalories() {
   const handleAddFoodItem = async () => {
     const { name, unit, calories, fat, carbs, protein, amount: number_of_units, mealType: type, link } = newFoodItem;
     const body = { name, unit, calories, fat, carbs, protein, number_of_units, type, link };
-    await POST(urls.food, body, login);
+    await POST(`${urls.food}/`, body, login);
     setFoodItems([...foodItems, newFoodItem]);
     closeModal();
   };
@@ -249,7 +249,7 @@ export function FoodAndCalories() {
             <option value="BREAKFAST">Breakfast</option>
             <option value="LUNCH">Lunch</option>
             <option value="DINNER">Dinner</option>
-            <option value="Snack">Snack</option>
+            <option value="SNACK">Snack</option>
           </select>
           <button
             className="bg-violet-800 text-white px-4 py-2 rounded mt-4"
