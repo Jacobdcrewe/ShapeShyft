@@ -1,7 +1,7 @@
 import React from "react";
-import { FoodItemProps } from "../pages/user/FoodAndCalories";
+import { UserFoodItemProps } from "../pages/user/FoodAndCalories";
 
-export const FoodItem = (props: FoodItemProps) => {
+export const FoodItem = (props: UserFoodItemProps) => {
     return (
         <div className="flex items-center justify-between bg-white p-3 rounded-lg shadow-md my-2">
             <div className="flex flex-col">

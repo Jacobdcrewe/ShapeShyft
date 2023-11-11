@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Modal from "react-modal";
 import { FoodItem } from "../../food/FoodItem";
 import { UserContext } from "../../ContentRouter";
-import { GET } from "../../../composables/api";
+import { GET, POST } from "../../../composables/api";
 import urls from "../../../composables/urls.json";
 
 export interface FoodItemProps {
@@ -13,27 +13,47 @@ export interface FoodItemProps {
   carbs?: number;
   protein?: number;
   amount: number;
+  link?: string;
+}
+
+export interface UserFoodItemProps {
+  name: string;
+  unit: string;
+  calories: number;
+  fat?: number;
+  carbs?: number;
+  protein?: number;
+  amount: number;
   mealType: string;
+  link?: string;
 }
 
 export function FoodAndCalories() {
   const { login } = useContext(UserContext);
-  const [foodItems, setFoodItems] = useState<FoodItemProps[]>([
-    {
-      name: "Apple",
-      unit: 'medium (3" dia)',
-      calories: 95,
-      fat: 0.3,
-      carbs: 25,
-      protein: 0.5,
-      amount: 1,
-      mealType: "Snacks",
-    },
-  ]);
+  const [foodItems, setFoodItems] = useState<UserFoodItemProps[]>([]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<FoodItemProps[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [breakfast, lunch, dinner, snack] = (await Promise.all([
+        GET(`${urls.food}/BREAKFAST`, login),
+        GET(`${urls.food}/LUNCH`, login),
+        GET(`${urls.food}/DINNER`, login),
+        GET(`${urls.food}/SNACK`, login)
+      ]));
+      const foodItems = [
+        ...breakfast.map((f: FoodItemProps) => ({...f, mealType: 'BREAKFAST'})),
+        ...lunch.map((f: FoodItemProps) => ({...f, mealType: 'LUNCH'})),
+        ...dinner.map((f: FoodItemProps) => ({...f, mealType: 'DINNER'})),
+        ...snack.map((f: FoodItemProps) => ({...f, mealType: 'SNACK'}))
+      ];
+      setFoodItems(foodItems);
+    }
+    fetchData();
+  }, []);
 
   const fetchSearchResults = async (query: string) => {
     if (query.length === 0) {
@@ -62,13 +82,13 @@ export function FoodAndCalories() {
   };
 
   const handleSelectFoodItem = (item: FoodItemProps) => {
-    setNewFoodItem({ ...item, amount: 1 });
+    setNewFoodItem({ ...item, amount: 1, mealType: '' });
     setSearchQuery(item.name);
     setShowDropdown(false);
   };
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [newFoodItem, setNewFoodItem] = useState<FoodItemProps>({
+  const [newFoodItem, setNewFoodItem] = useState<UserFoodItemProps>({
     name: "",
     amount: 0,
     unit: "",
@@ -91,7 +111,10 @@ export function FoodAndCalories() {
   });
   };
 
-  const handleAddFoodItem = () => {
+  const handleAddFoodItem = async () => {
+    const { name, unit, calories, fat, carbs, protein, amount: number_of_units, mealType: type, link } = newFoodItem;
+    const body = { name, unit, calories, fat, carbs, protein, number_of_units, type, link };
+    await POST(urls.food, body, login);
     setFoodItems([...foodItems, newFoodItem]);
     closeModal();
   };
@@ -223,10 +246,10 @@ export function FoodAndCalories() {
             <option value="" disabled>
               Select a meal type
             </option>
-            <option value="Breakfast">Breakfast</option>
-            <option value="Lunch">Lunch</option>
-            <option value="Dinner">Dinner</option>
-            <option value="Snacks">Snacks</option>
+            <option value="BREAKFAST">Breakfast</option>
+            <option value="LUNCH">Lunch</option>
+            <option value="DINNER">Dinner</option>
+            <option value="Snack">Snack</option>
           </select>
           <button
             className="bg-violet-800 text-white px-4 py-2 rounded mt-4"
@@ -238,7 +261,7 @@ export function FoodAndCalories() {
       </Modal>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5 ">
-        {["Breakfast", "Lunch", "Dinner", "Snacks"].map((mealType) => (
+        {["Breakfast", "Lunch", "Dinner", "Snack"].map((mealType) => (
           <div
             className="rounded-xl h-96 px-4 py-2 bg-neutral-50 overflow-hidden shadow-[0px 0px 10px rgba(0,0,0,0.2)]"
             key={mealType}
@@ -251,7 +274,7 @@ export function FoodAndCalories() {
             </div>
             <div className="overflow-y-auto h-72">
               {foodItems
-                .filter((item) => item.mealType === mealType)
+                .filter((item) => item.mealType === mealType.toUpperCase())
                 .map((item, index) => (
                   <FoodItem
                     key={index}
