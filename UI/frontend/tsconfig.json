@@ -1,5 +1,7 @@
 {
-  "files": ["global.d.ts"],
+  "files": [
+    "global.d.ts"
+  ],
   "compilerOptions": {
     "target": "es5",
     "lib": [
@@ -19,7 +21,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve"
   },
   "include": [
     "src"
