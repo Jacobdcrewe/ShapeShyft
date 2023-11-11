@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
 
 import SearchWorkout from "../../Workout/SearchWorkout";
 import Exercises from "../../Workout/Exercises";
 import Welcome from "../../Workout/Welcome";
 import DailyStepsModal from "../../Workout/DailyStepsModal";
 import DailyStepsDisplay from "../../Workout/DailyStepsDisplay"; 
+import WorkoutCounter from "../../Workout/WorkoutCounter";
 
 const Exercise: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -25,21 +25,17 @@ const Exercise: React.FC = () => {
     }
   };
   
+  
   return (
     <div className="container mx-auto px-4">
-      <div className="flex flex-col md:flex-col">
-        <div className="md:flex-1">
-          <Welcome />
-        </div>
-        <div className="md:flex-1">
-          <DailyStepsDisplay stepsTaken={steps} />
-        </div>
+      <Welcome />
+      <div className="flex justify-between items-center space-x-4">
+        <DailyStepsDisplay stepsTaken={steps} />
+        <WorkoutCounter />
       </div>
-      <div>
-        <SearchWorkout />
-        <Exercises />
-        <DailyStepsModal open={modalOpen} onClose={handleModalClose} />
-      </div>
+      <SearchWorkout />
+      <Exercises />
+      <DailyStepsModal open={modalOpen} onClose={handleModalClose} />
     </div>
   );
 };

@@ -64,12 +64,12 @@ export function Dashboard() {
             icon={<BoltIcon className="w-full h-full" />}
           />
         </div>
-        <div
+        {/* <div
           className="rounded-xl p-4 py-2 bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.2)] hover:cursor-pointer overscroll-contain overflow-auto col-span-1 md:col-span-2"
           onClick={exampleFunction}
         >
           <p>{exuser}</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
