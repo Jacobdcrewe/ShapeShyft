@@ -16,16 +16,8 @@ export interface FoodItemProps {
   link?: string;
 }
 
-export interface UserFoodItemProps {
-  name: string;
-  unit: string;
-  calories: number;
-  fat?: number;
-  carbs?: number;
-  protein?: number;
-  number_of_units: number;
+export interface UserFoodItemProps extends FoodItemProps {
   mealType: string;
-  link?: string;
 }
 
 export function FoodAndCalories() {
@@ -54,7 +46,6 @@ export function FoodAndCalories() {
         ...snack.map((f: FoodItemProps) => ({ ...f, mealType: "SNACK" })),
       ];
       setFoodItems(foodItems);
-      console.log(foodItems)
     };
     fetchData();
   }, []);
@@ -143,18 +134,7 @@ export function FoodAndCalories() {
     closeModal();
   };
 
-  // const calculateTotalCalories = (mealType: string): number => {
-  //   return foodItems
-  //     .filter((item) => item.mealType === mealType.toUpperCase())
-  //     .reduce((total, item) => {
-  //       const calories = item.calories || 0;
-  //       const number_of_units = item.number_of_units || 0;
-  //       return total + calories * number_of_units;
-  //     }, 0);
-  // };
-
   const calculateTotalCalories = (mealType: string) => {
-    console.log(foodItems)
     return foodItems
       .filter(item => item.mealType === mealType.toUpperCase())
       .reduce((total, item) => total + (item.calories * item.number_of_units), 0);
