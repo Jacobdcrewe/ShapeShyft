@@ -11,6 +11,8 @@ export function CalorySection() {
   const { login } = useContext(UserContext);
   const [intake, setIntake] = useState(0 as number);
   const [loadingCalories, setLoadingCalories] = useState(true);
+
+  // gets and sets intake calories
   useEffect(() => {
     const getCalories = async () => {
       const cal = await GET(urls.total_calories, login);

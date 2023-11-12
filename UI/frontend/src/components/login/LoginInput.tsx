@@ -11,7 +11,7 @@ export const LoginInput = (props: LoginInputProps) => {
   return (
     <div className="flex flex-col gap-8">
       <TextInput
-        placeholder="Email"
+        placeholder="Email/Username"
         id="username"
         onChange={(e: any) => {
           props.setUsername(e.target.value);
