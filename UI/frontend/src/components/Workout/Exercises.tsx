@@ -1,11 +1,36 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import "../../assets/css/index.css";
 import ExerciseCard from "./ExerciseCard";
+import { UserContext } from "../ContentRouter";
+import { GET } from "../../composables/api";
+import urls from "../../composables/urls.json";
+
+export interface ExerciseProps {
+  key?: number;
+  name: string;
+  type: string;
+  muscle: string;
+  equipment: string;
+  difficulty: string;
+  instructions: string;
+}
 
 const Exercises = () => {
+  const { login } = useContext(UserContext);
+  const [exercises, setExercises] = useState<ExerciseProps[]>([]);
   const [rowsOfExercises, setRowsOfExercises] = useState(2);
   const endOfListRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // const fetchData = async () => {
+    //   const response = await GET(`${urls.getRandomExercises}`, login);
+    //   if (response.success) {
+    //    setExercises(response.items);
+    //   } 
+    // };
+    // fetchData();
+  }, [login]);
 
   const scrollToNewExercises = () => {
     if (endOfListRef.current) {
@@ -14,7 +39,7 @@ const Exercises = () => {
   };
 
   useEffect(() => {
-    if (rowsOfExercises > 2) { 
+    if (rowsOfExercises > 2) {
       scrollToNewExercises();
     }
   }, [rowsOfExercises]);
@@ -26,24 +51,18 @@ const Exercises = () => {
   };
 
   const generateExerciseCards = () => {
-    let allCards = [];
-    for (let i = 0; i < rowsOfExercises * 3; i++) {
-      allCards.push(
-        <CSSTransition key={i} timeout={500} classNames="item">
-          <ExerciseCard
-          name={`Exercise ${i + 1}`} 
-          difficulty="Intermediate" 
-          muscles="Chest" 
-          equipment="Dumbbells" 
+    return exercises.slice(0, rowsOfExercises * 3).map((exercise, i) => (
+      <CSSTransition key={i} timeout={500} classNames="item">
+        <ExerciseCard
+          name={exercise.name}
+          type={exercise.type}
+          muscle={exercise.muscle}
+          equipment={exercise.equipment}
+          difficulty={exercise.difficulty}
+          instructions={exercise.instructions}
         />
-        </CSSTransition>
-      );
-    }
-    
-    allCards.push(
-      <div key="endOfList" ref={endOfListRef} aria-hidden="true" />
-    );
-    return allCards;
+      </CSSTransition>
+    ));
   };
 
   return (
@@ -54,7 +73,7 @@ const Exercises = () => {
       <TransitionGroup className="flex flex-row flex-wrap justify-center gap-8 mt-12">
         {generateExerciseCards()}
       </TransitionGroup>
-      {rowsOfExercises * 3 < 15 && (
+      {rowsOfExercises * 3 < exercises.length && (
         <div className="mt-8 flex justify-center">
           <button
             className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
@@ -64,6 +83,7 @@ const Exercises = () => {
           </button>
         </div>
       )}
+      <div ref={endOfListRef} aria-hidden="true" />
     </div>
   );
 };
