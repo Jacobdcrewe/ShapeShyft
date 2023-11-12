@@ -12,20 +12,12 @@ export interface FoodItemProps {
   fat?: number;
   carbs?: number;
   protein?: number;
-  amount: number;
+  number_of_units: number;
   link?: string;
 }
 
-export interface UserFoodItemProps {
-  name: string;
-  unit: string;
-  calories: number;
-  fat?: number;
-  carbs?: number;
-  protein?: number;
-  amount: number;
+export interface UserFoodItemProps extends FoodItemProps {
   mealType: string;
-  link?: string;
 }
 
 export function FoodAndCalories() {
@@ -35,23 +27,26 @@ export function FoodAndCalories() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<FoodItemProps[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
-
+  
   useEffect(() => {
     const fetchData = async () => {
-      const [breakfast, lunch, dinner, snack] = (await Promise.all([
+      const [breakfast, lunch, dinner, snack] = await Promise.all([
         GET(`${urls.food}/BREAKFAST`, login),
         GET(`${urls.food}/LUNCH`, login),
         GET(`${urls.food}/DINNER`, login),
-        GET(`${urls.food}/SNACK`, login)
-      ]));
+        GET(`${urls.food}/SNACK`, login),
+      ]);
       const foodItems = [
-        ...breakfast.map((f: FoodItemProps) => ({...f, mealType: 'BREAKFAST'})),
-        ...lunch.map((f: FoodItemProps) => ({...f, mealType: 'LUNCH'})),
-        ...dinner.map((f: FoodItemProps) => ({...f, mealType: 'DINNER'})),
-        ...snack.map((f: FoodItemProps) => ({...f, mealType: 'SNACK'}))
+        ...breakfast.map((f: FoodItemProps) => ({
+          ...f,
+          mealType: "BREAKFAST",
+        })),
+        ...lunch.map((f: FoodItemProps) => ({ ...f, mealType: "LUNCH" })),
+        ...dinner.map((f: FoodItemProps) => ({ ...f, mealType: "DINNER" })),
+        ...snack.map((f: FoodItemProps) => ({ ...f, mealType: "SNACK" })),
       ];
       setFoodItems(foodItems);
-    }
+    };
     fetchData();
   }, []);
 
@@ -82,7 +77,7 @@ export function FoodAndCalories() {
   };
 
   const handleSelectFoodItem = (item: FoodItemProps) => {
-    setNewFoodItem({ ...item, amount: 1, mealType: '' });
+    setNewFoodItem({ ...item, number_of_units: 1, mealType: "" });
     setSearchQuery(item.name);
     setShowDropdown(false);
   };
@@ -90,7 +85,7 @@ export function FoodAndCalories() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newFoodItem, setNewFoodItem] = useState<UserFoodItemProps>({
     name: "",
-    amount: 0,
+    number_of_units: 0,
     unit: "",
     calories: 0,
     mealType: "",
@@ -101,19 +96,39 @@ export function FoodAndCalories() {
     setModalIsOpen(false);
     setNewFoodItem({
       name: "",
-      amount: 0,
+      number_of_units: 0,
       unit: "",
       calories: 0,
-      fat: 0,       
+      fat: 0,
       carbs: 0,
       protein: 0,
       mealType: "",
-  });
+    });
   };
 
   const handleAddFoodItem = async () => {
-    const { name, unit, calories, fat, carbs, protein, amount: number_of_units, mealType: type, link } = newFoodItem;
-    const body = { name, unit, calories, fat, carbs, protein, number_of_units, type, link };
+    const {
+      name,
+      unit,
+      calories,
+      fat,
+      carbs,
+      protein,
+      number_of_units: number_of_units,
+      mealType: type,
+      link,
+    } = newFoodItem;
+    const body = {
+      name,
+      unit,
+      calories,
+      fat,
+      carbs,
+      protein,
+      number_of_units,
+      type,
+      link,
+    };
     await POST(`${urls.food}/`, body, login);
     setFoodItems([...foodItems, newFoodItem]);
     closeModal();
@@ -121,9 +136,10 @@ export function FoodAndCalories() {
 
   const calculateTotalCalories = (mealType: string) => {
     return foodItems
-      .filter((item) => item.mealType === mealType)
-      .reduce((total, item) => total + Number(item.calories), 0);
+      .filter(item => item.mealType === mealType.toUpperCase())
+      .reduce((total, item) => total + (item.calories * item.number_of_units), 0);
   };
+  
 
   return (
     <div className="w-full h-full p-5">
@@ -165,11 +181,11 @@ export function FoodAndCalories() {
           <label className="block mb-2 w-full">Amount:</label>
           <input
             type="number"
-            value={newFoodItem.amount}
+            value={newFoodItem.number_of_units}
             onChange={(e) =>
               setNewFoodItem({
                 ...newFoodItem,
-                amount: parseFloat(e.target.value),
+                number_of_units: parseFloat(e.target.value),
               })
             }
             className="border border-gray-300 px-2 py-1 rounded mb-4 w-full"
@@ -279,7 +295,7 @@ export function FoodAndCalories() {
                   <FoodItem
                     key={index}
                     name={item.name}
-                    amount={item.amount}
+                    number_of_units={item.number_of_units}
                     unit={item.unit}
                     calories={item.calories}
                     mealType={item.mealType}
