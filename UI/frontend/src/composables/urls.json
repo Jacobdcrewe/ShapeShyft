@@ -6,5 +6,6 @@
     "food_search": "https://api.shapeshyft.online/api/v1/food/search",
     "food": "https://api.shapeshyft.online/api/v1/food",
     "get_water": "https://api.shapeshyft.online/api/v1/health/getWater",
+    "POST_water": "https://api.shapeshyft.online/api/v1/health/createWater",
     "total_calories": "https://api.shapeshyft.online/api/v1/food/totalCalories"
 }
