@@ -1,41 +1,56 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
 import CaloryItem from "./CaloryItem";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { FireIcon, HeartIcon } from "@heroicons/react/24/solid";
+import { UserContext } from "../../ContentRouter";
+import { GET } from "../../../composables/api";
+import urls from "../../../composables/urls.json";
+import Loading from "../../common/Loading";
+
 export function CalorySection() {
-  let caloryItem = {
-    caloryIntake: 3240,
-    caloryBurn: 500,
-  };
+  const { login } = useContext(UserContext);
+  const [intake, setIntake] = useState(0 as number);
+  const [loadingCalories, setLoadingCalories] = useState(true);
+  useEffect(() => {
+    const getCalories = async () => {
+      const cal = await GET(urls.total_calories, login);
+      if (cal.success) {
+        const val = parseInt(cal.total_calories);
+        await setIntake(val);
+        setLoadingCalories(false);
+      }
+    };
+
+    getCalories();
+  }, [login]);
+
+  const caloriesToConsume = 8000;
 
   let caloryItems = [
     {
-      icon: <FireIcon className="w-full h-full text-violet-700" />,
-      text: "Calories Burned",
-      value: caloryItem.caloryBurn,
-    },
-    {
       icon: <HeartIcon className="w-full h-full text-rose-700" />,
       text: "Calories Consumed",
-      value: caloryItem.caloryIntake,
+      value: intake,
+    },
+    {
+      icon: <FireIcon className="w-full h-full text-violet-700" />,
+      text: "Calories Left to Consume",
+      value: caloriesToConsume - intake > 0 ? caloriesToConsume - intake : 0,
     },
   ];
 
-  const data = [
-    {
-      name: "Calories Burned",
-      value: caloryItem.caloryBurn,
-    },
-    {
-      name: "Calories Consumed",
-      value: caloryItem.caloryIntake,
-    },
-  ];
-  const COLORS = ["rgb(109 40 217)", "rgb(190 18 60)"];
+  const renderPieChart = () => {
+    const val = caloriesToConsume - intake > 0 ? caloriesToConsume - intake : 0;
+    const data = [] as { name: string; value: number }[];
+    if (!loadingCalories) {
+      data.push({ name: "Calories Consumed", value: intake });
+      data.push({ name: "Calories Left to Consume", value: val });
+    }
 
-  return (
-    <>
-      <div className="w-full aspect-[3/2] lg:w-2/3 xl:w-1/4 xl:aspect-square flex items-center justify-center mr-10">
+    const COLORS = ["rgb(190 18 60)", "rgb(109 40 217)"];
+
+    if (!loadingCalories) {
+      return (
         <ResponsiveContainer
           width="100%"
           height="100%"
@@ -47,7 +62,7 @@ export function CalorySection() {
               innerRadius="60%"
               outerRadius="90%"
               cornerRadius={15}
-              paddingAngle={5}
+              paddingAngle={val === 0 ? 0 : 5}
               dataKey="value"
             >
               {data.map((entry, index) => (
@@ -62,6 +77,14 @@ export function CalorySection() {
             <Tooltip />
           </PieChart>
         </ResponsiveContainer>
+      );
+    }
+    return null;
+  };
+  return (
+    <>
+      <div className="w-full aspect-[3/2] lg:w-2/3 xl:w-1/4 xl:aspect-square flex items-center justify-center mr-10">
+        {loadingCalories ? <Loading /> : renderPieChart()}
       </div>
 
       <div className="gap-4 flex flex-col justify-center">

@@ -1,8 +1,8 @@
 import { ITokenModel } from "../models/ITokenModel";
-import file from "./urls.json";
+//import file from "./urls.json";
 async function checkRefresh(token: ITokenModel): Promise<any> {
   try {
-    const val = JSON.parse(atob(token.refresh_token.split(".")[1]));
+    const val = JSON.parse(atob(token.access_token.split(".")[1]));
     const expiration = val.exp ? val.exp * 1000 : 0;
     console.log(
       "Expiration Date: " + new Date(expiration),
@@ -10,9 +10,19 @@ async function checkRefresh(token: ITokenModel): Promise<any> {
     );
 
     if (expiration < Date.now()) {
-      console.log(
-        await POST(file.refresh_token, { refresh_token: token.refresh_token })
-      );
+      console.log("Token is expired");
+      /* const response = await fetch(file.refresh_token, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          refresh_token: token.refresh_token,
+        }),
+      });
+      console.log(response); */
+      localStorage.setItem("userLogin", "");
+      window.location.href = "/";
     }
   } catch (e) {
     console.error(e);
