@@ -5,5 +5,6 @@
     "refresh_token": "https://api.shapeshyft.online/api/account/v1/auth/refresh",
     "food_search": "https://api.shapeshyft.online/api/v1/food/search",
     "food": "https://api.shapeshyft.online/api/v1/food",
-    "get_water": "https://api.shapeshyft.online/api/v1/health/getWater"
+    "get_water": "https://api.shapeshyft.online/api/v1/health/getWater",
+    "total_calories": "https://api.shapeshyft.online/api/v1/food/totalCalories"
 }
