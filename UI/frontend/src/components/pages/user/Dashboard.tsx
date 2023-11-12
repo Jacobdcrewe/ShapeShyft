@@ -24,14 +24,16 @@ export function Dashboard() {
   useEffect(() => {
     const getWater = async () => {
       const water = await GET(file.get_water, login);
-
-      const today = new Date().toISOString().split("T")[0];
-      const val = water.find((item: any) => {
-        return new Date(item.date).toISOString().split("T")[0] === today;
-      });
-      setWaterAmount(val.amt);
+      if (water.success) {
+        const today = new Date().toISOString().split("T")[0];
+        const val = water.find((item: any) => {
+          return new Date(item.date).toISOString().split("T")[0] === today;
+        });
+        setWaterAmount(val.amt);
+      } else {
+        setWaterAmount(0);
+      }
     };
-
     getWater();
   }, [login]);
 
