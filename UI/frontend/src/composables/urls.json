@@ -8,5 +8,10 @@
     "get_water": "https://api.shapeshyft.online/api/v1/health/getWater",
     "getRandomExercises": "https://api.shapeshyft.online/api/v1/exercise/getRandomExercises",
     "getExercisesByBodyPart": "https://api.shapeshyft.online/api/v1/exercise/getExercisesByBodyPart",
+    "POST_water": "https://api.shapeshyft.online/api/v1/health/createWater",
+    "update_water": "https://api.shapeshyft.online/api/v1/health/updateWater",
+    "POST_sleep": "https://api.shapeshyft.online/api/v1/health/createSleep",
+    "Get_sleep": "https://api.shapeshyft.online/api/v1/health/getSleep",
+    "edit_sleep": "https://api.shapeshyft.online/api/v1/health/editSleep",
     "total_calories": "https://api.shapeshyft.online/api/v1/food/totalCalories"
 }
