@@ -112,7 +112,7 @@ export function HealthAndWellness() {
 
   const GetWaterCount = async () => {
     try {
-      const val = await GET(file.GET_water, login);
+      const val = await GET(file.get_water, login);
       if (val && val.waterCount !== undefined) {
         setWaterCount(val.waterCount);
       } else {
