@@ -11,9 +11,7 @@ export function HealthAndWellness() {
   const { login } = useContext(UserContext);
 
   // State for counters
-  const [waterCount, setWaterCount] = useState(0);
-  const [foodCount, setFoodCount] = useState(0);
-  const [exerciseCount, setExerciseCount] = useState(0);
+  const [waterCount, setWaterCount] = useState(0); // Allow both number and null
 
   // State for Sleep Start and End
   const [sleepStart, setSleepStart] = useState("");
@@ -114,12 +112,15 @@ export function HealthAndWellness() {
 
   const GetWaterCount = async () => {
     try {
-      const val = await GET(file.me, login);
+      const val = await GET(file.get_water, login);
       if (val && val.waterCount !== undefined) {
         setWaterCount(val.waterCount);
+      } else {
+        setWaterCount(0); // Fallback to 0 if response does not have waterCount
       }
     } catch (e) {
       console.error("Error: fetching water count from backend failed.", e);
+      setWaterCount(0);
     }
   };
 
@@ -149,7 +150,7 @@ export function HealthAndWellness() {
 
   const PostWaterCount = async (updatedCount: any) => {
     try {
-      const val = await POST(file.me, updatedCount, login);
+      const val = await POST(file.POST_water, { amt: updatedCount }, login);
       if (val.success) {
         // Successful POST is printed on console
         console.log(val);
@@ -178,7 +179,7 @@ export function HealthAndWellness() {
     };
 
     try {
-      const val = await POST(file.me, sleepData, login);
+      const val = await POST(file.POST_sleep, sleepData, login);
       if (val.success) {
         console.log("Sleep data posted successfully:", val);
       }
