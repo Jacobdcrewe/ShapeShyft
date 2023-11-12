@@ -66,6 +66,9 @@ const HorizontalScrollbar: React.FC = () => {
 
   return (
     <div className="w-full h-full overflow-hidden relative">
+      <h2 className="text-4xl font-bold mt-11">
+        Focusing on any specific body part today?
+      </h2>
       <div className="flex space-x-5 py-5 px-4">
         <div className="flex-grow relative" style={{ overflow: "hidden" }}>
           <div

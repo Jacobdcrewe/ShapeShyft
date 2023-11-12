@@ -13,5 +13,6 @@
     "POST_sleep": "https://api.shapeshyft.online/api/v1/health/createSleep",
     "Get_sleep": "https://api.shapeshyft.online/api/v1/health/getSleep",
     "edit_sleep": "https://api.shapeshyft.online/api/v1/health/editSleep",
-    "total_calories": "https://api.shapeshyft.online/api/v1/food/totalCalories"
+    "total_calories": "https://api.shapeshyft.online/api/v1/food/totalCalories",
+    "getExercisesBySearch": "https://api.shapeshyft.online/api/v1/exercise/getExercisesBySearch"
 }
