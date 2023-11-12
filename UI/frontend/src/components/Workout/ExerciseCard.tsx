@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import InstructionsModal from './InstructionsModal'; 
 import "../../assets/css/WorkoutSection.css";
 
-type ExerciseCardProps = {
+export type ExerciseCardProps = {
   type: string;
   name: string;
   difficulty: string;
@@ -44,7 +44,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ name, type, difficulty, mus
               <p>Difficulty: {difficulty}</p>
               <p>Muscles: {muscle}</p>
               <p>Equipment: {equipment}</p>
-              <button onClick={handleStartClick} className="start-btn">Start</button>
+              <button onClick={handleStartClick} className="start-btn bg-gradient-to-t from-indigo-950 to-pink-950 focus:outline-none hover:scale-110 transform transition duration-300 ease-in-out">Start</button>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ name, type, difficulty, mus
         <div>
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">{name} Instructions</h3>
           <p className="text-gray-600 text-sm">
-            Ensure proper form and start with a weight that's comfortable. Increase the weight gradually as you progress.
+            {instructions}
           </p>
         </div>
       </InstructionsModal>

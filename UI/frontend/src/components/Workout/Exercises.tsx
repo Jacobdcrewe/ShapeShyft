@@ -76,7 +76,7 @@ const Exercises = () => {
       {rowsOfExercises * 3 < exercises.length && (
         <div className="mt-8 flex justify-center">
           <button
-            className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
+            className="px-6 py-3 text-white rounded-lg shadow-md bg-gradient-to-t from-indigo-950 to-pink-950 transition duration-300 "
             onClick={addRowOfExercises}
           >
             More

@@ -1,12 +1,16 @@
-import React from 'react';
+import React from "react";
 
 interface InstructionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  children: React.ReactNode; 
+  children: React.ReactNode;
 }
 
-const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, onClose, children }) => {
+const InstructionsModal: React.FC<InstructionsModalProps> = ({
+  isOpen,
+  onClose,
+  children,
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -15,7 +19,7 @@ const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, onClose, 
         {children}
         <button
           onClick={onClose}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none"
+          className="mt-4 px-4 py-2 bg-gradient-to-t from-indigo-950 to-pink-950 text-white rounded focus:outline-none hover:scale-110 transform transition duration-300 ease-in-out hover:shadow-lg"
         >
           Finish Workout
         </button>
