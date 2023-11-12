@@ -7,5 +7,6 @@
     "food": "https://api.shapeshyft.online/api/v1/food",
     "get_water": "https://api.shapeshyft.online/api/v1/health/getWater",
     "getRandomExercises": "https://api.shapeshyft.online/api/v1/exercise/getRandomExercises",
-    "getExercisesByBodyPart": "https://api.shapeshyft.online/api/v1/exercise/getExercisesByBodyPart"
+    "getExercisesByBodyPart": "https://api.shapeshyft.online/api/v1/exercise/getExercisesByBodyPart",
+    "total_calories": "https://api.shapeshyft.online/api/v1/food/totalCalories"
 }
