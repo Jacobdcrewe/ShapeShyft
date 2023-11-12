@@ -3,13 +3,15 @@ import InstructionsModal from './InstructionsModal';
 import "../../assets/css/WorkoutSection.css";
 
 type ExerciseCardProps = {
+  type: string;
   name: string;
   difficulty: string;
-  muscles: string;
+  muscle: string;
   equipment: string;
+  instructions: string;
 };
 
-const ExerciseCard: React.FC<ExerciseCardProps> = ({ name, difficulty, muscles, equipment }) => {
+const ExerciseCard: React.FC<ExerciseCardProps> = ({ name, type, difficulty, muscle, equipment, instructions }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); 
 
@@ -40,7 +42,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ name, difficulty, muscles, 
           <div className="exercise-card-back flex justify-center items-center w-[430px] h-96 bg-white rounded-xl shadow-lg">
             <div className="text-center">
               <p>Difficulty: {difficulty}</p>
-              <p>Muscles: {muscles}</p>
+              <p>Muscles: {muscle}</p>
               <p>Equipment: {equipment}</p>
               <button onClick={handleStartClick} className="start-btn">Start</button>
             </div>
