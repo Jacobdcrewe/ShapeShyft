@@ -6,10 +6,13 @@
     "food_search": "https://api.shapeshyft.online/api/v1/food/search",
     "food": "https://api.shapeshyft.online/api/v1/food",
     "get_water": "https://api.shapeshyft.online/api/v1/health/getWater",
-    "POST_water": "https://api.shapeshyft.online/api/v1/health/createWater",
+    "getRandomExercises": "https://api.shapeshyft.online/api/v1/exercise/getRandomExercises",
+    "getExercisesByBodyPart": "https://api.shapeshyft.online/api/v1/exercise/getExercisesByBodyPart",
+    "POST_water": "https://api.shapeshyft.online/api/v1/health/ceWater",
     "update_water": "https://api.shapeshyft.online/api/v1/health/updateWater",
-    "POST_sleep": "https://api.shapeshyft.online/api/v1/health/createSleep",
+    "POST_sleep": "https://api.shapeshyft.online/api/v1/health/ceSleep",
     "Get_sleep": "https://api.shapeshyft.online/api/v1/health/getSleep",
-    "edit_sleep": "https://api.shapeshyft.online/api/v1/health/editSleep"
-    "total_calories": "https://api.shapeshyft.online/api/v1/food/totalCalories"
+    "edit_sleep": "https://api.shapeshyft.online/api/v1/health/editSleep",
+    "total_calories": "https://api.shapeshyft.online/api/v1/food/totalCalories",
+    "getExercisesBySearch": "https://api.shapeshyft.online/api/v1/exercise/getExercisesBySearch"
 }

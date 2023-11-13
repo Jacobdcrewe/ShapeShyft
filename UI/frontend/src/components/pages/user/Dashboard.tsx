@@ -9,30 +9,26 @@ import HealthSection from "../../dashboard/HealthSection";
 import { BeakerIcon, BoltIcon } from "@heroicons/react/24/solid";
 
 export function Dashboard() {
-  const [exuser, setExUser] = useState(
-    "(example of making api call) click me!"
-  );
+  // const [exuser, setExUser] = useState(
+  //   "(example of making api call) click me!"
+  // );
 
   const [waterAmount, setWaterAmount] = useState(0);
 
   const { login } = useContext(UserContext);
-  const exampleFunction = async () => {
-    const val = await GET(file.me, login);
-    setExUser(JSON.stringify(val));
-  };
+  // const exampleFunction = async () => {
+  //   const val = await GET(file.me, login);
+  //   setExUser(JSON.stringify(val));
+  // };
 
   useEffect(() => {
     const getWater = async () => {
       const water = await GET(file.get_water, login);
-      if (water.success) {
-        const today = new Date().toISOString().split("T")[0];
-        const val = water.find((item: any) => {
-          return new Date(item.date).toISOString().split("T")[0] === today;
-        });
-        setWaterAmount(val.amt);
-      } else {
-        setWaterAmount(0);
-      }
+      const today = new Date().toISOString().split("T")[0];
+      const val = water.find((item: any) => {
+        return new Date(item.date).toISOString().split("T")[0] === today;
+      });
+      setWaterAmount(val.amt);
     };
     getWater();
   }, [login]);
