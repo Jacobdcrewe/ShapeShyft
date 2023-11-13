@@ -26,7 +26,7 @@ export function CalorySection() {
     getCalories();
   }, [login]);
 
-  const caloriesToConsume = 8000;
+  const caloriesToConsume = 2500;
 
   let caloryItems = [
     {
