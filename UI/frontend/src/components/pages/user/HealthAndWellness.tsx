@@ -113,8 +113,12 @@ export function HealthAndWellness() {
   const GetWaterCount = async () => {
     try {
       const val = await GET(file.get_water, login);
-      if (val && val.waterCount !== undefined) {
-        setWaterCount(val.waterCount);
+      const today = new Date().toISOString().split("T")[0];
+      const water = val.find((item: any) => {
+        return new Date(item.date).toISOString().split("T")[0] === today;
+      });
+      if (water && water.amt !== undefined) {
+        setWaterCount(water.amt);
       } else {
         setWaterCount(0); // Fallback to 0 if response does not have waterCount
       }
@@ -162,6 +166,7 @@ export function HealthAndWellness() {
 
   const handleWaterCountChange = (delta: any) => {
     const updatedCount = waterCount + delta;
+    console.log(updatedCount);
     setWaterCount(updatedCount);
     PostWaterCount(updatedCount); // Send the updated count to the backend
   };
@@ -172,10 +177,12 @@ export function HealthAndWellness() {
     );
   };
   const postSleepData = async () => {
+    const start = new Date(`01/01/2000 ${sleepStart}`);
+    const end = new Date(`01/01/2000 ${sleepEnd}`);
+    console.log(start, end);
     const sleepData = {
-      start: sleepStart,
-      end: sleepEnd,
-      duration: sleepDuration,
+      s_time: sleepStart,
+      e_time: sleepEnd,
     };
 
     try {
