@@ -14,24 +14,42 @@ export function Dashboard() {
   // );
 
   const [waterAmount, setWaterAmount] = useState(0);
+  const [sleepAmount, setSleepAmount] = useState(0);
 
   const { login } = useContext(UserContext);
   // const exampleFunction = async () => {
   //   const val = await GET(file.me, login);
   //   setExUser(JSON.stringify(val));
   // };
+  const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
     const getWater = async () => {
       const water = await GET(file.get_water, login);
-      const today = new Date().toISOString().split("T")[0];
       const val = water.find((item: any) => {
         return new Date(item.date).toISOString().split("T")[0] === today;
       });
-      setWaterAmount(val.amt);
+      if(val && val.success) {
+        setWaterAmount(val.amt);
+      }
     };
     getWater();
-  }, [login]);
+  }, [login, today]);
+
+  useEffect(() => {
+    const getSleep = async () => {
+      const sleep = await GET(file.get_sleep, login);
+      console.log(sleep)
+      const val = sleep.find((item: any) => {
+        return new Date(item.date).toISOString().split("T")[0] === today;
+      });
+      if(val && val.success) {
+        setSleepAmount(val.h_slept);
+      }
+    };
+
+    getSleep();
+  }, [login, today])
 
   return (
     <div className="w-full h-full min-w-[330px] overscroll-x-contain">
@@ -56,8 +74,8 @@ export function Dashboard() {
         </div>
         <div className="rounded-xl p-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] col-span-1 flex items-center justify-evenly flex-wrap xl:flex-nowrap">
           <HealthSection
-            actual={parseFloat((Math.random() * 10).toFixed(2))}
-            recommended={10}
+            actual={parseFloat(sleepAmount.toFixed(2))}
+            recommended={8}
             prompt="Hours of Sleep Today"
             icon={<BoltIcon className="w-full h-full" />}
           />
