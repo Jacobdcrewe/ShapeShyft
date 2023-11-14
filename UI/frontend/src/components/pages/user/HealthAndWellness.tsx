@@ -19,8 +19,36 @@ export function HealthAndWellness() {
   const [sleepDuration, setSleepDuration] = useState("");
 
   // State for user information
-  const [weight, setWeight] = useState(0);
-  const [height, setHeight] = useState(0);
+
+  const [weight, setWeight] = useState(0); // Initialize weight
+  const [height, setHeight] = useState(0); // Initialize height
+
+  const handleWeightChange = async (newWeight: number) => {
+    setWeight(newWeight);
+    await sendBmiDataToBackend(newWeight, height);
+  };
+
+  const handleHeightChange = async (newHeight: number) => {
+    setHeight(newHeight);
+    await sendBmiDataToBackend(weight, newHeight);
+  };
+
+  // Function to send BMI data to backend
+  const sendBmiDataToBackend = async (weight: number, height: number) => {
+    try {
+      // Replace with your actual API call
+      const response = await POST(file.POST_bmi, { weight, height }, login);
+      setBmiResponse(
+        `Weight: ${weight} kg, Height: ${height} cm, BMI: ${response.bmi}`
+      );
+    } catch (error) {
+      console.error("Error sending BMI data:", error);
+      setBmiResponse("Failed to fetch BMI data.");
+    }
+  };
+
+  // State to store the backend response
+  const [bmiResponse, setBmiResponse] = useState("");
 
   // Calculate BMI
   const calculateBMI = () => {
@@ -308,7 +336,7 @@ export function HealthAndWellness() {
                 min="0"
                 type="number"
                 value={weight}
-                onChange={(e) => setWeight(parseInt(e.target.value))}
+                onChange={(e) => handleWeightChange(Number(e.target.value))}
                 className="w-full mt-2 p-2 border border-gray-300 rounded"
               />
             </div>
@@ -318,7 +346,7 @@ export function HealthAndWellness() {
                 min="0"
                 type="number"
                 value={height}
-                onChange={(e) => setHeight(parseInt(e.target.value))}
+                onChange={(e) => handleHeightChange(Number(e.target.value))}
                 className="w-full mt-2 p-2 border border-gray-300 rounded"
               />
             </div>
@@ -328,6 +356,15 @@ export function HealthAndWellness() {
             <span className="w-1/4 p-2 border border-gray-300 rounded">
               {calculateBMI()}
             </span>
+          </div>
+        </section>
+
+        <section className="mt-8">
+          <h2 className="text-2xl font-semibold mb-4 text-blue-600">
+            BMI Response from Backend
+          </h2>
+          <div>
+            <p className="text-lg">{bmiResponse}</p>
           </div>
         </section>
 
