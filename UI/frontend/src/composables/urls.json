@@ -8,13 +8,11 @@
     "get_water": "https://api.shapeshyft.online/api/v1/health/getWater",
     "getRandomExercises": "https://api.shapeshyft.online/api/v1/exercise/getRandomExercises",
     "getExercisesByBodyPart": "https://api.shapeshyft.online/api/v1/exercise/getExercisesByBodyPart",
-    "POST_water": "https://api.shapeshyft.online/api/v1/health/ceWater",
-    "update_water": "https://api.shapeshyft.online/api/v1/health/updateWater",
-    "POST_sleep": "https://api.shapeshyft.online/api/v1/health/ceSleep",
-    "Get_sleep": "https://api.shapeshyft.online/api/v1/health/getSleep",
-    "edit_sleep": "https://api.shapeshyft.online/api/v1/health/editSleep",
-    "GET_bmi": "https://api.shapeshyft.online/api/v1/health/tips",
-    "POST_bmi": "https://api.shapeshyft.online/api/v1/health/tips",
+    "post_water": "https://api.shapeshyft.online/api/v1/health/ceWater",
+    "post_sleep": "https://api.shapeshyft.online/api/v1/health/ceSleep",
+    "get_sleep": "https://api.shapeshyft.online/api/v1/health/getSleep",
+    "get_bmi": "https://api.shapeshyft.online/api/v1/health/tips",
+    "post_bmi": "https://api.shapeshyft.online/api/v1/health/tips",
     "total_calories": "https://api.shapeshyft.online/api/v1/food/totalCalories",
     "getExercisesBySearch": "https://api.shapeshyft.online/api/v1/exercise/getExercisesBySearch"
 }

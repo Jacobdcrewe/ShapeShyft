@@ -37,7 +37,7 @@ export function HealthAndWellness() {
   const sendBmiDataToBackend = async (weight: number, height: number) => {
     try {
       // Replace with your actual API call
-      const response = await POST(file.POST_bmi, { weight, height }, login);
+      const response = await POST(file.post_bmi, { weight, height }, login);
       setBmiResponse(
         `Weight: ${weight} kg, Height: ${height} cm, BMI: ${response.bmi}`
       );
@@ -182,7 +182,7 @@ export function HealthAndWellness() {
 
   const PostWaterCount = async (updatedCount: any) => {
     try {
-      const val = await POST(file.POST_water, { amt: updatedCount }, login);
+      const val = await POST(file.post_water, { amt: updatedCount }, login);
       if (val.success) {
         // Successful POST is printed on console
         console.log(val);
@@ -205,16 +205,16 @@ export function HealthAndWellness() {
     );
   };
   const postSleepData = async () => {
-    const start = new Date(`01/01/2000 ${sleepStart}`);
-    const end = new Date(`01/01/2000 ${sleepEnd}`);
-    console.log(start, end);
+
+    const s_time = convert12Hour(sleepStart);
+    const e_time = convert12Hour(sleepEnd);
     const sleepData = {
-      s_time: sleepStart,
-      e_time: sleepEnd,
+      s_time: s_time,
+      e_time: e_time,
     };
 
     try {
-      const val = await POST(file.POST_sleep, sleepData, login);
+      const val = await POST(file.post_sleep, sleepData, login);
       if (val.success) {
         console.log("Sleep data posted successfully:", val);
       }
@@ -222,7 +222,17 @@ export function HealthAndWellness() {
       console.error("Error posting sleep data:", e);
     }
   };
+  const convert12Hour = (time: any) => {
+      // Check correct time format and split into components
+      time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
 
+    if (time.length > 1) { // If time format correct
+      time = time.slice(1); // Remove full string match value
+      time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
+      time[0] = +time[0] % 12 || 12; // Adjust hours
+    }
+    return time.join('')
+  }
   const calculateSleepDuration = () => {
     if (sleepStart && sleepEnd) {
       const startTime: Date = new Date(`01/01/2000 ${sleepStart}`);
