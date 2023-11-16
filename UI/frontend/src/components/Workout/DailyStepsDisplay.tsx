@@ -1,6 +1,5 @@
 import React from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { FireIcon } from "@heroicons/react/24/solid";
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 
@@ -38,8 +37,8 @@ const DailyStepsDisplay: React.FC<DailyStepsDisplayProps> = ({ stepsTaken }) => 
   const COLORS = ["rgb(109 40 217)", "rgb(190 18 60)"];
 
   return (
-    <div className="flex justify-center items-center w-1/2 bg-white rounded-xl shadow-lg h-96 mt-16">
-      <div className="flex justify-around items-center w-full"> 
+    <div className="flex justify-center items-center w-full bg-white rounded-xl shadow-lg h-96 mt-16">
+      <div className="flex justify-around items-center w-1/2 mr-auto ml-8"> 
         <div className="w-1/2 mr-4"> 
           <ResponsiveContainer aspect={1}>
             <PieChart>

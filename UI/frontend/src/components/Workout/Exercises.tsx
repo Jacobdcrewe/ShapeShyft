@@ -23,13 +23,13 @@ const Exercises = () => {
   const endOfListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // const fetchData = async () => {
-    //   const response = await GET(`${urls.getRandomExercises}`, login);
-    //   if (response.success) {
-    //    setExercises(response.items);
-    //   } 
-    // };
-    // fetchData();
+    const fetchData = async () => {
+      const response = await GET(`${urls.getRandomExercises}`, login);
+      if (response.success) {
+       setExercises(response.items);
+      } 
+    };
+    fetchData();
   }, [login]);
 
   const scrollToNewExercises = () => {
