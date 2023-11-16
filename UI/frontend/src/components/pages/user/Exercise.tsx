@@ -53,7 +53,6 @@ const Exercise: React.FC = () => {
       <Welcome />
       <div className="flex justify-between items-center space-x-4">
         <DailyStepsDisplay stepsTaken={steps} />
-        <WorkoutCounter />
       </div>
       <SearchWorkout />      
       <Exercises />

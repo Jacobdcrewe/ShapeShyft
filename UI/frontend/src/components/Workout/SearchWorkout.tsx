@@ -4,7 +4,6 @@ import HorizontalScrollbar from "./HorizontalScrollbar";
 import { GET } from "../../composables/api";
 import urls from "../../composables/urls.json";
 import { UserContext } from "../ContentRouter";
-import SearchResults from "./SearchResults";
 import ExerciseCard, { ExerciseCardProps } from './ExerciseCard';
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
@@ -40,8 +39,8 @@ const SearchWorkout = () => {
       const response = await GET(`${urls.getExercisesBySearch}?query=${encodeURIComponent(value)}`, login);
       if (response && response.items) {
         setSearchResults(response.items);
-        setShowDropdown(true); // Show dropdown with options
-        setShowResults(false); // Do not show the white container yet
+        setShowDropdown(true); 
+        setShowResults(false); 
       } else {
         setSearchResults([]);
         setError("No exercises found.");
@@ -59,16 +58,15 @@ const SearchWorkout = () => {
       return;
     }
 
-    // If an exercise is selected, show results
     setShowResults(true);
-    setShowDropdown(false); // Hide dropdown after search
+    setShowDropdown(false); 
   };
 
   const handleSelectExercise = (exercise: Exercise) => {
     setSelectedExercise(exercise);
-    setSearch(exercise.name); // Update the search input to show the selected exercise's name
+    setSearch(exercise.name); 
     setShowDropdown(false);
-    setError(""); // Clear any existing error messages
+    setError(""); 
   };
 
   const loadMoreResults = () => {
@@ -78,7 +76,6 @@ const SearchWorkout = () => {
   const renderSearchResults = () => {
     return searchResults.slice(0, displayCount).map((exercise, index) => (
       <CSSTransition key={index} timeout={500} classNames="item">
-        {/* Assuming ExerciseCard is modified to accept Exercise type */}
         <ExerciseCard 
         name={exercise.name}
         type={exercise.type}

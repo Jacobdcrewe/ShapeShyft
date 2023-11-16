@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { POST } from "../../composables/api";
+import urls from "../../composables/urls.json";
+import { UserContext } from "../ContentRouter";
 
 interface DailyStepsModalProps {
   open: boolean;
@@ -6,11 +9,38 @@ interface DailyStepsModalProps {
 }
 
 const DailyStepsModal: React.FC<DailyStepsModalProps> = ({ open, onClose }) => {
+  const { login } = useContext(UserContext);
   const [steps, setSteps] = useState<string>('');
 
-  const handleClose = () => {
-    onClose(steps); 
-  };
+  const handleClose = async () => {
+    console.log('Submit button clicked, steps:', steps);
+
+    const handleSaveSteps = async () => {
+      const parsedSteps = parseInt(steps, 10);
+      if (isNaN(parsedSteps)) {
+        console.error('Entered steps are not a valid number');
+        return false;
+      }
+    
+      const body = { steps: parsedSteps };
+      try {
+        await POST(`${urls.createSteps}`, body, login);
+        console.log('Steps saved successfully');
+        return true;
+      } catch (error) {
+        console.error('Error saving steps:', error);
+        return false;
+      }
+    };
+    
+    const saveSuccess = await handleSaveSteps();
+    if (saveSuccess) {
+      onClose(steps);
+      } 
+      else {
+        console.error('No steps entered');
+      }
+    } 
 
   const handleStepsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSteps(event.target.value);
