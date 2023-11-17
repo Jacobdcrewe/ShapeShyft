@@ -60,6 +60,7 @@ export async function POST(
   token?: ITokenModel
 ): Promise<any> {
   try {
+    if (token) checkRefresh(token);
     const headers: any = {
       accept: "application/json",
       "Content-Type": "application/json",
@@ -91,6 +92,7 @@ export async function PUT(
   token?: ITokenModel
 ): Promise<any> {
   try {
+    if (token) checkRefresh(token);
     const headers: any = {
       "Content-Type": "application/json",
     };

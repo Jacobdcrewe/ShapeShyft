@@ -10,13 +10,21 @@ import Loading from "../../common/Loading";
 export function CalorySection() {
   const { login } = useContext(UserContext);
   const [intake, setIntake] = useState(0 as number);
+  const [caloriesToConsume, setCaloriesToConsume] = useState(2500 as number);
   const [loadingCalories, setLoadingCalories] = useState(true);
 
-  // gets and sets intake calories
+
+  // gets and sets intake calories and calories to consume
   useEffect(() => {
     const getCalories = async () => {
+      const calToConsume = await GET(urls.me, login);
+      if (calToConsume && calToConsume.success) {
+        const val = parseInt(calToConsume.suggested_calories);
+        await setCaloriesToConsume(val);
+      }
+
       const cal = await GET(urls.total_calories, login);
-      if (cal.success) {
+      if (cal && cal.success) {
         const val = parseInt(cal.total_calories);
         await setIntake(val);
         setLoadingCalories(false);
@@ -25,8 +33,6 @@ export function CalorySection() {
 
     getCalories();
   }, [login]);
-
-  const caloriesToConsume = 2500;
 
   let caloryItems = [
     {
