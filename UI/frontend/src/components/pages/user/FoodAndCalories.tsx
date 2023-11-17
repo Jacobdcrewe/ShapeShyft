@@ -27,7 +27,8 @@ export function FoodAndCalories() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<FoodItemProps[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  
+  const [currentDate, setCurrentDate] = useState("");
+
   useEffect(() => {
     const fetchData = async () => {
       const [breakfast, lunch, dinner, snack] = await Promise.all([
@@ -48,6 +49,15 @@ export function FoodAndCalories() {
       setFoodItems(foodItems);
     };
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const date = new Date();
+    const formattedDate = date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+    });
+    setCurrentDate(formattedDate);
   }, []);
 
   const fetchSearchResults = async (query: string) => {
@@ -82,12 +92,19 @@ export function FoodAndCalories() {
     setShowDropdown(false);
   };
 
+  const handleDeleteFoodItem = (itemName: string) => {
+    setFoodItems(foodItems.filter((item) => item.name !== itemName));
+  };
+
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newFoodItem, setNewFoodItem] = useState<UserFoodItemProps>({
     name: "",
     number_of_units: 0,
     unit: "",
     calories: 0,
+    protein: 0,
+    fat: 0,
+    carbs: 0,
     mealType: "",
   });
 
@@ -134,15 +151,20 @@ export function FoodAndCalories() {
     closeModal();
   };
 
-  const calculateTotalCalories = (mealType: string) => {
+  const calculateTotalCaloriesMealType = (mealType: string) => {
     return foodItems
-      .filter(item => item.mealType === mealType.toUpperCase())
-      .reduce((total, item) => total + (item.calories * item.number_of_units), 0);
+      .filter((item) => item.mealType === mealType.toUpperCase())
+      .reduce((total, item) => total + item.calories * item.number_of_units, 0);
+  };
+
+  const calculateTotalCalories = () => {
+    return foodItems.reduce((total, item) => total + item.calories * item.number_of_units, 0);
   };
   
 
   return (
     <div className="w-full h-full p-5">
+      <h1 className="text-4xl mb-8">Your Calorie Intake for <span className="font-bold">{currentDate}</span>: <span className="font-bold">{calculateTotalCalories()}</span> kcal</h1>
       {/* Modal */}
       <Modal
         isOpen={modalIsOpen}
@@ -163,6 +185,7 @@ export function FoodAndCalories() {
               value={searchQuery}
               onChange={handleNameChange}
               className="border border-gray-300 px-2 py-1 rounded mb-4 w-full"
+              placeholder="Search a Food..."
             />
             {showDropdown && (
               <ul className="absolute z-10 w-full border border-gray-200 bg-white max-h-60 overflow-auto">
@@ -178,6 +201,7 @@ export function FoodAndCalories() {
               </ul>
             )}
           </div>
+
           <label className="block mb-2 w-full">Amount:</label>
           <input
             type="number"
@@ -189,68 +213,34 @@ export function FoodAndCalories() {
               })
             }
             className="border border-gray-300 px-2 py-1 rounded mb-4 w-full"
+            placeholder="Enter an Amount..."
           />
+
           <label className="block mb-2 w-full">Unit:</label>
-          <input
-            type="text"
-            value={newFoodItem.unit}
-            onChange={(e) =>
-              setNewFoodItem({ ...newFoodItem, unit: e.target.value })
-            }
-            className="border border-gray-300 px-2 py-1 rounded mb-4 w-full"
-          />
-          <label className="block mb-2 w-full">Calories:</label>
-          <input
-            type="number"
-            value={newFoodItem.calories}
-            onChange={(e) =>
-              setNewFoodItem({
-                ...newFoodItem,
-                calories: parseFloat(e.target.value),
-              })
-            }
-            disabled
-            className="border border-gray-300 px-2 py-1 rounded mb-4 w-full"
-          />
-          <label className="block mb-2 w-full">Fat (optional):</label>
-          <input
-            type="number"
-            value={newFoodItem.fat}
-            onChange={(e) =>
-              setNewFoodItem({
-                ...newFoodItem,
-                fat: parseFloat(e.target.value),
-              })
-            }
-            disabled
-            className="border border-gray-300 px-2 py-1 rounded mb-4 w-full"
-          />
-          <label className="block mb-2 w-full">Carbs (optional):</label>
-          <input
-            type="number"
-            value={newFoodItem.carbs}
-            onChange={(e) =>
-              setNewFoodItem({
-                ...newFoodItem,
-                carbs: parseFloat(e.target.value),
-              })
-            }
-            disabled
-            className="border border-gray-300 px-2 py-1 rounded mb-4 w-full"
-          />
-          <label className="block mb-2 w-full">Protein (optional):</label>
-          <input
-            type="number"
-            value={newFoodItem.protein}
-            onChange={(e) =>
-              setNewFoodItem({
-                ...newFoodItem,
-                protein: parseFloat(e.target.value),
-              })
-            }
-            disabled
-            className="border border-gray-300 px-2 py-1 rounded mb-4 w-full"
-          />
+          <div className="mb-4 w-full font-bold text-l">{newFoodItem.unit}</div>
+
+          <div className="grid grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block mb-2 text-lg">Calories:</label>
+              <div className="font-bold text-xl">{newFoodItem.calories}</div>
+            </div>
+
+            <div>
+              <label className="block mb-2 text-lg">Fat:</label>
+              <div className="font-bold text-xl">{newFoodItem.fat}</div>
+            </div>
+
+            <div>
+              <label className="block mb-2 text-lg">Carbs:</label>
+              <div className="font-bold text-xl">{newFoodItem.carbs}</div>
+            </div>
+
+            <div>
+              <label className="block mb-2 text-lg">Protein:</label>
+              <div className="font-bold text-xl">{newFoodItem.protein}</div>
+            </div>
+          </div>
+
           <label className="block mb-2 w-full">Meal Type:</label>
           <select
             value={newFoodItem.mealType}
@@ -267,9 +257,23 @@ export function FoodAndCalories() {
             <option value="DINNER">Dinner</option>
             <option value="SNACK">Snack</option>
           </select>
+
           <button
-            className="bg-violet-800 text-white px-4 py-2 rounded mt-4"
+            className={`bg-violet-800 text-white px-4 py-2 rounded mt-4 ${
+              newFoodItem.number_of_units <= 0 ||
+              isNaN(newFoodItem.number_of_units) ||
+              newFoodItem.name.trim() === "" ||
+              newFoodItem.mealType === ""
+                ? "disabled:opacity-50 bg-gray-400" // Additional styling for disabled state
+                : ""
+            }`}
             onClick={handleAddFoodItem}
+            disabled={
+              newFoodItem.number_of_units <= 0 ||
+              isNaN(newFoodItem.number_of_units) ||
+              newFoodItem.name.trim() === "" ||
+              newFoodItem.mealType === ""
+            }
           >
             Add Food Item
           </button>
@@ -283,9 +287,15 @@ export function FoodAndCalories() {
             key={mealType}
           >
             <div className="flex justify-between mb-4">
-              <h1 className="text-2xl font-semibold">{mealType}</h1>
+              <h1 className="text-2xl font-semibold">
+                {mealType}
+                {mealType === "Breakfast" && <span> 🥞</span>}
+                {mealType === "Lunch" && <span> 🥙</span>}
+                {mealType === "Dinner" && <span> 🍛</span>}
+                {mealType === "Snack" && <span> 🍎</span>}
+              </h1>
               <span className="text-2l font-bold">
-                {calculateTotalCalories(mealType)} cal
+                {calculateTotalCaloriesMealType(mealType)} cal
               </span>
             </div>
             <div className="overflow-y-auto h-72">
@@ -298,7 +308,11 @@ export function FoodAndCalories() {
                     number_of_units={item.number_of_units}
                     unit={item.unit}
                     calories={item.calories}
+                    protein={item.protein}
+                    carbs={item.carbs}
+                    fat={item.fat}
                     mealType={item.mealType}
+                    onDelete={() => handleDeleteFoodItem(item.name)}
                   />
                 ))}
             </div>
