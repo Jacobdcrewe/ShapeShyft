@@ -115,3 +115,31 @@ export async function PUT(
     console.error("ERROR IN PUT REQUEST: ", error);
   }
 }
+
+export async function DELETE(url: string, token?: ITokenModel): Promise<any> {
+  try {
+    const headers: any = {};
+
+    if (token != null) {
+      headers["Authorization"] = `${token.token_type} ${token.access_token}`;
+    }
+
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers,
+    });
+
+    if (!response.ok) {
+      throw new Error(`DELETE request failed with status: ${response.status}`);
+    }
+
+    try {
+      const responseData = await response.json();
+      return responseData;
+    } catch (error) {
+      return `Resource deleted successfully with status: ${response.status}`;
+    }
+  } catch (error) {
+    console.error("ERROR IN DELETE REQUEST: ", error);
+  }
+}

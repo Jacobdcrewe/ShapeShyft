@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import Modal from "react-modal";
 import { FoodItem } from "../../food/FoodItem";
 import { UserContext } from "../../ContentRouter";
-import { GET, POST } from "../../../composables/api";
+import { GET, POST, DELETE } from "../../../composables/api";
 import urls from "../../../composables/urls.json";
 
 export interface FoodItemProps {
+  uuid?: string;
   name: string;
   unit: string;
   calories: number;
@@ -20,9 +21,25 @@ export interface UserFoodItemProps extends FoodItemProps {
   mealType: string;
 }
 
+interface UserData {
+  success: boolean;
+  uuid: string;
+  phone_number: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  age: number;
+  weight: number;
+  height: number;
+  suggested_calories: number;
+  date_joined: string;
+  last_login: string;
+}
+
 export function FoodAndCalories() {
   const { login } = useContext(UserContext);
   const [foodItems, setFoodItems] = useState<UserFoodItemProps[]>([]);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<FoodItemProps[]>([]);
@@ -60,6 +77,20 @@ export function FoodAndCalories() {
     setCurrentDate(formattedDate);
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userInfo = await GET(urls.me, login);
+        setUserData(userInfo);
+        console.log(userInfo);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchData();
+  }, [login]);
+
   const fetchSearchResults = async (query: string) => {
     if (query.length === 0) {
       setSearchResults([]);
@@ -92,8 +123,14 @@ export function FoodAndCalories() {
     setShowDropdown(false);
   };
 
-  const handleDeleteFoodItem = (itemName: string) => {
-    setFoodItems(foodItems.filter((item) => item.name !== itemName));
+  const handleDeleteFoodItem = async (itemId: string) => {
+    try {
+      await DELETE(`${urls.food}/${itemId}`, login);
+
+      setFoodItems(foodItems.filter((item) => item.uuid !== itemId));
+    } catch (error) {
+      console.error("Could not delete the food item: ", error);
+    }
   };
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -158,13 +195,43 @@ export function FoodAndCalories() {
   };
 
   const calculateTotalCalories = () => {
-    return foodItems.reduce((total, item) => total + item.calories * item.number_of_units, 0);
+    return foodItems.reduce(
+      (total, item) => total + item.calories * item.number_of_units,
+      0
+    );
   };
-  
 
   return (
     <div className="w-full h-full p-5">
-      <h1 className="text-4xl mb-8">Your Calorie Intake for <span className="font-bold">{currentDate}</span>: <span className="font-bold">{calculateTotalCalories()}</span> kcal</h1>
+      <div className="max-w-2xl mx-auto text-center">
+        <h1 className="text-3xl font-bold text-gray-700 mb-6">{currentDate}</h1>
+
+        <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6 mb-10">
+          <div className="bg-violet-100 text-violet-800 rounded-lg shadow px-5 py-3">
+            <div className="text-xl font-semibold">Calories Consumed</div>
+            <div className="text-2xl font-bold">
+              {calculateTotalCalories()} kcal
+            </div>
+          </div>
+
+          <div
+            className={`rounded-lg shadow px-5 py-3 ${
+              calculateTotalCalories() > (userData?.suggested_calories ?? 0)
+                ? "bg-red-100 text-red-800"
+                : "bg-green-100 text-green-800"
+            }`}
+          >
+            <div className="text-xl font-semibold">Calories Remaining</div>
+            <div className="text-2xl font-bold">
+              {userData
+                ? `${
+                    userData.suggested_calories - calculateTotalCalories()
+                  } kcal`
+                : "Loading..."}
+            </div>
+          </div>
+        </div>
+      </div>
       {/* Modal */}
       <Modal
         isOpen={modalIsOpen}
@@ -295,7 +362,7 @@ export function FoodAndCalories() {
                 {mealType === "Snack" && <span> 🍎</span>}
               </h1>
               <span className="text-2l font-bold">
-                {calculateTotalCaloriesMealType(mealType)} cal
+                {calculateTotalCaloriesMealType(mealType)} kcal
               </span>
             </div>
             <div className="overflow-y-auto h-72">
@@ -312,7 +379,7 @@ export function FoodAndCalories() {
                     carbs={item.carbs}
                     fat={item.fat}
                     mealType={item.mealType}
-                    onDelete={() => handleDeleteFoodItem(item.name)}
+                    onDelete={() => handleDeleteFoodItem(item.uuid || "")}
                   />
                 ))}
             </div>
