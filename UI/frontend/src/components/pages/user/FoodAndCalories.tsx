@@ -46,26 +46,27 @@ export function FoodAndCalories() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [currentDate, setCurrentDate] = useState("");
 
+  const fetchFoodData = async () => {
+    const [breakfast, lunch, dinner, snack] = await Promise.all([
+      GET(`${urls.food}/BREAKFAST`, login),
+      GET(`${urls.food}/LUNCH`, login),
+      GET(`${urls.food}/DINNER`, login),
+      GET(`${urls.food}/SNACK`, login),
+    ]);
+    const foodItems = [
+      ...breakfast.map((f: FoodItemProps) => ({
+        ...f,
+        mealType: "BREAKFAST",
+      })),
+      ...lunch.map((f: FoodItemProps) => ({ ...f, mealType: "LUNCH" })),
+      ...dinner.map((f: FoodItemProps) => ({ ...f, mealType: "DINNER" })),
+      ...snack.map((f: FoodItemProps) => ({ ...f, mealType: "SNACK" })),
+    ];
+    setFoodItems(foodItems);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      const [breakfast, lunch, dinner, snack] = await Promise.all([
-        GET(`${urls.food}/BREAKFAST`, login),
-        GET(`${urls.food}/LUNCH`, login),
-        GET(`${urls.food}/DINNER`, login),
-        GET(`${urls.food}/SNACK`, login),
-      ]);
-      const foodItems = [
-        ...breakfast.map((f: FoodItemProps) => ({
-          ...f,
-          mealType: "BREAKFAST",
-        })),
-        ...lunch.map((f: FoodItemProps) => ({ ...f, mealType: "LUNCH" })),
-        ...dinner.map((f: FoodItemProps) => ({ ...f, mealType: "DINNER" })),
-        ...snack.map((f: FoodItemProps) => ({ ...f, mealType: "SNACK" })),
-      ];
-      setFoodItems(foodItems);
-    };
-    fetchData();
+    fetchFoodData();
   }, []);
 
   useEffect(() => {
@@ -158,6 +159,7 @@ export function FoodAndCalories() {
       protein: 0,
       mealType: "",
     });
+    setSearchQuery("");
   };
 
   const handleAddFoodItem = async () => {
@@ -184,8 +186,9 @@ export function FoodAndCalories() {
       link,
     };
     await POST(`${urls.food}/`, body, login);
-    setFoodItems([...foodItems, newFoodItem]);
+    await fetchFoodData();
     closeModal();
+    setSearchQuery("");
   };
 
   const calculateTotalCaloriesMealType = (mealType: string) => {
