@@ -3,6 +3,11 @@ import { POST } from "../../../composables/api";
 import { GET } from "../../../composables/api";
 import { UserContext } from "../../ContentRouter";
 import file from "../../../composables/urls.json";
+import { BeakerIcon, BoltIcon } from "@heroicons/react/24/solid";
+import UserInfoSection from "../../dashboard/UserInfoSection";
+import CalorySection from "../../dashboard/calory/CalorySection";
+import ExerciseSection from "../../dashboard/ExerciseSection";
+import HealthSection from "../../dashboard/HealthSection";
 import "./HealthAndWellness.css";
 
 export function HealthAndWellness() {
@@ -12,10 +17,17 @@ export function HealthAndWellness() {
 
   // State for counters
   const [waterCount, setWaterCount] = useState(0); // Allow both number and null
+  const [waterAmount, setWaterAmount] = useState(0);
+
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const [sleepDataResponse, setSleepDataResponse] = useState("");
 
   // State for Sleep Start and End
   const [sleepStart, setSleepStart] = useState("");
   const [sleepEnd, setSleepEnd] = useState("");
+  const [sleepAmount, setSleepAmount] = useState(0);
   const [sleepDuration, setSleepDuration] = useState("");
 
   // State for user information
@@ -37,18 +49,24 @@ export function HealthAndWellness() {
   const sendBmiDataToBackend = async (weight: number, height: number) => {
     try {
       // Replace with your actual API call
-      const response = await POST(file.POST_bmi, { weight, height }, login);
-      setBmiResponse(
-        `Weight: ${weight} kg, Height: ${height} cm, BMI: ${response.bmi}`
-      );
+      const response = await POST(file.post_bmi, { weight, height, Bmi }, login);
+      // setBmiResponse(
+      //   `Weight: ${weight} kg, Height: ${height} cm, BMI: ${response.bmi}`
+      // );
+      if (response.success) {
+        setBmiResponse(`BMI Data Sent Successfully: ${Bmi}`);
+      } else {
+        setBmiResponse("Failed to send BMI data.");
+      }
     } catch (error) {
       console.error("Error sending BMI data:", error);
-      setBmiResponse("Failed to fetch BMI data.");
+      setBmiResponse("Failed to send BMI data.");
     }
   };
 
   // State to store the backend response
   const [bmiResponse, setBmiResponse] = useState("");
+  const [Bmi, setBmi] = useState(0);
 
   // Calculate BMI
   const calculateBMI = () => {
@@ -71,12 +89,38 @@ export function HealthAndWellness() {
     }
   };
 
+
+
   // Placeholder for personalized health tips fetched from the backend
   const [personalizedHealthTips, setPersonalizedHealthTips] = useState("");
 
   interface WaterTrackerMessageProps {
     waterCount: number;
   }
+
+  // Function to send user data to the backend
+  const sendUserDataToBackend = async () => {
+    try {
+      // Replace with your actual API endpoint for sending user data
+      const response = await POST(file.tips, {
+        waterCount,
+        weight,
+        height,
+        bmi: Bmi,
+        sleepStart,
+        sleepEnd,
+      }, login);
+
+      // if (response.success) {
+      //   console.log("User data sent successfully:", response);
+      //   fetchPersonalizedHealthTips(); // Fetch personalized tips after sending user data
+      // } else {
+      //   console.error("Error sending user data:", response);
+      // }
+    } catch (error) {
+      console.error("Error sending user data:", error);
+    }
+  };
 
   <br></br>;
   function WaterTrackerMessage({ waterCount }: WaterTrackerMessageProps) {
@@ -134,6 +178,49 @@ export function HealthAndWellness() {
   }, [waterCount]);
 
   useEffect(() => {
+    const getWater = async () => {
+      const water = await GET(file.get_water, login);
+      const val = water.find((item: any) => {
+        return new Date(item.date).toISOString().split("T")[0] === today;
+      });
+      if(val && val.success) {
+        setWaterAmount(val.amt);
+      }
+    };
+    getWater();
+  }, [login, today]);
+
+  useEffect(() => {
+    const getSleep = async () => {
+      const sleep = await GET(file.get_sleep, login);
+      console.log(sleep);
+      const val = sleep.find((item: any) => {
+        return new Date(item.date).toISOString().split("T")[0] === today;
+      });
+      if (val && val.success) {
+        setSleepAmount(val.h_slept);
+      }
+    };
+
+    getSleep();
+  }, [login, today]);
+
+  useEffect(() => {
+    const savedSleepStart = localStorage.getItem("sleepStart");
+    const savedSleepEnd = localStorage.getItem("sleepEnd");
+
+    if (savedSleepStart) {
+      setSleepStart(savedSleepStart);
+    }
+
+    if (savedSleepEnd) {
+      setSleepEnd(savedSleepEnd);
+    }
+  }, []);
+
+  
+
+  useEffect(() => {
     const duration = calculateSleepDuration();
     setSleepDuration(duration);
   }, [sleepStart, sleepEnd]);
@@ -156,33 +243,52 @@ export function HealthAndWellness() {
     }
   };
 
+  
+  // Function to fetch BMI data from the backend
+  const fetchBmiData = async () => {
+    try {
+      const response = await GET(file.get_bmi, login);
+      if (response && response.bmi) {
+        setBmi(response.bmi);
+      } else {
+        setBmi(0); // Set to a default value if no BMI data is available
+      }
+    } catch (error) {
+      console.error("Error fetching BMI data:", error);
+      setBmi(0); // Handle error by setting BMI to a default value
+    }
+  };
+
+  useEffect(() => {
+    // Fetch BMI data from the backend when the component is mounted
+    fetchBmiData()
+
+  }, [login]);
+
   // Fetching data from the backend
   useEffect(() => {
     // replace with your actual backend request
     const fetchPersonalizedHealthTips = async () => {
       try {
-        // Simulated fetch request
-        const response = await new Promise((resolve) =>
-          setTimeout(
-            () =>
-              resolve({
-                data: "Your personalized health and fitness tips will appear here.",
-              }),
-            1000
-          )
-        );
-        setPersonalizedHealthTips(file.me);
+        // Replace with your actual API endpoint for fetching personalized tips
+        const response = await GET(file.tips, login);
+        if (response && response.data) {
+          setPersonalizedHealthTips(response.data);
+        } else {
+          console.error("Error fetching personalized health tips: Invalid response");
+        }
       } catch (error) {
-        console.error("Error fetching personalized health tips: ", error);
+        console.error("Error fetching personalized health tips:", error);
       }
     };
+    
 
     fetchPersonalizedHealthTips();
   }, []);
 
   const PostWaterCount = async (updatedCount: any) => {
     try {
-      const val = await POST(file.POST_water, { amt: updatedCount }, login);
+      const val = await POST(file.post_water, { amt: updatedCount }, login);
       if (val.success) {
         // Successful POST is printed on console
         console.log(val);
@@ -205,24 +311,38 @@ export function HealthAndWellness() {
     );
   };
   const postSleepData = async () => {
-    const start = new Date(`01/01/2000 ${sleepStart}`);
-    const end = new Date(`01/01/2000 ${sleepEnd}`);
-    console.log(start, end);
+    const s_time = convert12Hour(sleepStart);
+    const e_time = convert12Hour(sleepEnd);
     const sleepData = {
-      s_time: sleepStart,
-      e_time: sleepEnd,
+      s_time: s_time,
+      e_time: e_time,
     };
 
     try {
-      const val = await POST(file.POST_sleep, sleepData, login);
+      const val = await POST(file.post_sleep, sleepData, login);
       if (val.success) {
         console.log("Sleep data posted successfully:", val);
+        setSleepDataResponse("Sleep data posted successfully");
       }
     } catch (e) {
       console.error("Error posting sleep data:", e);
+      setSleepDataResponse("Failed to post sleep data");
     }
   };
+  const convert12Hour = (time: any) => {
+    // Check correct time format and split into components
+    time = time
+      .toString()
+      .match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
 
+    if (time.length > 1) {
+      // If time format correct
+      time = time.slice(1); // Remove full string match value
+      time[5] = +time[0] < 12 ? "AM" : "PM"; // Set AM/PM
+      time[0] = +time[0] % 12 || 12; // Adjust hours
+    }
+    return time.join("");
+  };
   const calculateSleepDuration = () => {
     if (sleepStart && sleepEnd) {
       const startTime: Date = new Date(`01/01/2000 ${sleepStart}`);
@@ -259,10 +379,12 @@ export function HealthAndWellness() {
           <h2 className="text-4xl font-semibold mb-4 text-blue-600">
             Track Your Health
           </h2>
+          <section className="mb-8 border-b pb-6">
           <h3 className="text-2xl font-semibold mb-4 text-blue-600">
             Water Tracker{" "}
           </h3>
           <div className="flex items-center mb-4 space-x-4">
+          
             <p className="w-1/4 text-lg">Water (Glasses)</p>
             <button
               className={`${
@@ -282,8 +404,22 @@ export function HealthAndWellness() {
             >
               +
             </button>
+            
           </div>
           <WaterTrackerMessage waterCount={waterCount} />
+          </section>
+          <section className="mb-8 border-b pb-6">
+          <div className="rounded-xl p-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] col-span-1  flex items-center justify-evenly flex-wrap xl:flex-nowrap">
+          <HealthSection
+            actual={waterAmount}
+            recommended={8}
+            prompt="Glasses of Water Today"
+            usedColor="rgb(2 132 199)"
+            icon={<BeakerIcon className="w-full h-full" />}
+          />
+        </div>
+        </section>
+          
 
           {/* Example Alert Button */}
           <button
@@ -293,6 +429,7 @@ export function HealthAndWellness() {
             Show Example Alert
           </button>
         </section>
+        
 
         <section className="mb-8 border-b pb-6">
           <div className="mb-4">
@@ -316,14 +453,35 @@ export function HealthAndWellness() {
               className="w-1/4 border border-gray-300 rounded p-2"
             />
           </div>
+          <div>
+            {sleepDataResponse && (
+              <p
+                className={
+                  sleepDataResponse.includes("successfully")
+                    ? "text-green-500"
+                    : "text-red-500"
+                }
+              >
+                {sleepDataResponse}
+              </p>
+            )}
+          </div>
           <button
             onClick={postSleepData}
             className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
           >
             Submit Sleep Data
           </button>
-        </section>
 
+          <div className="rounded-xl p-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] col-span-1 flex items-center justify-evenly flex-wrap xl:flex-nowrap">
+            <HealthSection
+              actual={parseFloat(sleepAmount.toFixed(2))}
+              recommended={8}
+              prompt="Hours of Sleep Today"
+              icon={<BoltIcon className="w-full h-full" />}
+            />
+          </div>
+        </section>
         {/* Second Section - User Information */}
         <section className="mt-8">
           <h2 className="text-3xl font-semibold mb-4 text-blue-600">
@@ -351,27 +509,28 @@ export function HealthAndWellness() {
               />
             </div>
           </div>
-          <div className="mt-4">
-            <p className="text-lg">BMI</p>
-            <span className="w-1/4 p-2 border border-gray-300 rounded">
-              {calculateBMI()}
-            </span>
-          </div>
+        <h2 className="text-2xl font-semibold mb-4 text-blue-600">BMI Response</h2>
+        <div>
+          <p className="text-lg">{Bmi}</p>
+        </div>
+      
+          <section className="mt-8">
+          <button
+        onClick={() => {
+          calculateBMI(); // Calculate BMI
+          sendBmiDataToBackend(weight, height); // Update BMI data in the backend
+          fetchBmiData(); // Fetch and update BMI data from the backend
+        }}
+        className="bg-blue-500 text-white px-6 py-2 rounded shadow hover:bg-blue-600 transition"
+      >
+         Calculate BMI
+      </button>
+      </section>
         </section>
-
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold mb-4 text-blue-600">
-            BMI Response from Backend
-          </h2>
-          <div>
-            <p className="text-lg">{bmiResponse}</p>
-          </div>
-        </section>
-
         <section className="mt-8">
           {/* BMI Calculator */}
           <div>
-            <p className="text-lg">BMI Chart</p>
+            <p  className="text-2xl font-semibold mb-4 text-blue-600">BMI Chart</p>
             <img
               src="https://www.pnbmetlife.com/content/dam/pnb-metlife/images/icons/bmi-calculator/meter.png"
               alt="BMI chart"
