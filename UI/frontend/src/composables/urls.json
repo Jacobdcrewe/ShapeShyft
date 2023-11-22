@@ -11,8 +11,9 @@
     "post_water": "https://api.shapeshyft.online/api/v1/health/ceWater",
     "post_sleep": "https://api.shapeshyft.online/api/v1/health/ceSleep",
     "get_sleep": "https://api.shapeshyft.online/api/v1/health/getSleep",
-    "get_bmi": "https://api.shapeshyft.online/api/v1/health/tips",
-    "post_bmi": "https://api.shapeshyft.online/api/v1/health/tips",
+    "get_bmi": "https://api.shapeshyft.online/api/v1/health/bmi",
+    "post_bmi": "https://api.shapeshyft.online/api/v1/health/cBMI",
+    "tips": "https://api.shapeshyft.online/api/v1/health/tips",
     "total_calories": "https://api.shapeshyft.online/api/v1/food/totalCalories",
     "getExercisesBySearch": "https://api.shapeshyft.online/api/v1/exercise/getExercisesBySearch",
     "createSteps": "https://api.shapeshyft.online/api/v1/exercise/createSteps"
