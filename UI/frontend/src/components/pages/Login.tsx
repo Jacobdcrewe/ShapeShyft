@@ -18,6 +18,9 @@ export function Login() {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [age, setAge] = useState(0);
+  const [weight, setWeight] = useState(0);
+  const [height, setHeight] = useState(0); 
 
   const [isLogginIn, setLoggingIn] = useState(() => {
     const setSize = sessionStorage.getItem("loggingIn");
@@ -59,6 +62,9 @@ export function Login() {
       email: email,
       first_name: firstName,
       last_name: lastName,
+      age: age,
+      weight: weight,
+      height: height,
     };
     try {
       const user = await POST(urls.account, data);
@@ -81,8 +87,11 @@ export function Login() {
     setEmail("");
     setFirstName("");
     setLastName("");
+    setAge(0);
+    setWeight(0);
+    setHeight(0);
   };
-  //console.log(username, password, email, firstName, lastName);
+  console.log(username, password, email, firstName, lastName, age, weight, height);
   return (
     <div className="flex flex-grow items-center justify-center rounded-xl bg-gradient-to-t from-indigo-950 to-pink-950 overflow-hidden ">
       <div className="w-full h-full flex items-center justify-center overflow-x-hidden overscroll-contain overflow-auto p-4">
@@ -100,7 +109,7 @@ export function Login() {
 
           <div
             className={`relative p-10 w-full ${
-              isLogginIn ? "min-h-[472px] h-[472px]" : "min-h-[624px] h-[624px]"
+              isLogginIn ? "min-h-[472px] h-[472px]" : "min-h-[768px] h-[768px] md:min-h-[624px] md:h-[624px]"
             } flex flex-col bg-neutral-100 rounded-xl overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.8)] transition-all ease-in-out duration-300`}
           >
             <div className="h-[72px] max-h-[72px] min-h-[72px] flex flex-col">
@@ -155,8 +164,11 @@ export function Login() {
                   setEmail={setEmail}
                   setFirstName={setFirstName}
                   setLastName={setLastName}
+                  setAge={setAge}
+                  setHeight={setHeight}
+                  setWeight={setWeight}
                 />
-                <div className="sticky bottom-0 mt-auto w-full flex flex-col items-center justify-center gap-4">
+                <div className="md:sticky bottom-0 mt-auto w-full flex flex-col items-center justify-center gap-4">
                   <LoginPageButton
                     prompt={loading ? <Loading /> : "Create Account"}
                     id="createAccount"
