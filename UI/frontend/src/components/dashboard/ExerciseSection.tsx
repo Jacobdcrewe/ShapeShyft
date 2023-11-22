@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -9,28 +9,59 @@ import {
   YAxis,
 } from "recharts";
 import days from "../../composables/days.json";
+import { UserContext } from "../ContentRouter";
+import { GET } from "../../composables/api";
+import file from "../../composables/urls.json";
 
 export function ExerciseSection() {
-  let today = new Date();
-  const data = [];
-
+  const { login } = useContext(UserContext);
+  const today = new Date();
+  const dataset = [];
   for (let i = 6; i >= 0; i--) {
     const day = new Date(today);
     day.setDate(today.getDate() - i);
-    data.push({
+    dataset.push({
       date: days[day.getDay()],
-      hours: Math.round(Math.random() * 18),
+      Steps: 0,
     });
   }
-
+  const [dates, setDates] = useState<any[]>([...dataset]);
+  useEffect(() => {
+    const getSteps = async () => {
+      const data = [];
+      const today = new Date();
+      for (let i = 6; i >= 0; i--) {
+        const day = new Date(today);
+        day.setDate(today.getDate() - i);
+        console.log(day.toISOString().split("T")[0]);
+        const val = await GET(
+          file.steps + "?date=" + day.toISOString().split("T")[0],
+          login
+        );
+        if (val && val.success) {
+          data.push({
+            date: days[day.getDay()],
+            Steps: val.steps,
+          });
+        } else {
+          data.push({
+            date: days[day.getDay()],
+            Steps: 0,
+          });
+        }
+      }
+      setDates(data);
+    };
+    getSteps();
+  }, [login]);
   return (
     <div className="w-full">
-      <p className="px-8 mb-3 text-3xl">Hours of Exercise in the Past Week</p>
+      <p className="px-8 mb-3 text-3xl">Number of Steps in the Past Week</p>
       <ResponsiveContainer width="100%" height="100%" className="min-h-[270px]">
         <LineChart
           width={730}
           height={250}
-          data={data}
+          data={dates}
           margin={{
             top: 10,
             right: 30,
@@ -42,7 +73,7 @@ export function ExerciseSection() {
           <XAxis dataKey="date" />
           <YAxis />
           <Tooltip />
-          <Line type="monotone" dataKey="hours" stroke="rgb(109 40 217)" />
+          <Line type="monotone" dataKey="Steps" stroke="rgb(109 40 217)" />
         </LineChart>
       </ResponsiveContainer>
     </div>

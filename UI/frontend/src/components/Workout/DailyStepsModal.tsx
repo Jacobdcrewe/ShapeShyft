@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { POST } from "../../composables/api";
+import React, { useContext, useEffect, useState } from "react";
+import { GET, POST } from "../../composables/api";
 import urls from "../../composables/urls.json";
 import { UserContext } from "../ContentRouter";
 
@@ -11,6 +11,16 @@ interface DailyStepsModalProps {
 const DailyStepsModal: React.FC<DailyStepsModalProps> = ({ open, onClose }) => {
   const { login } = useContext(UserContext);
   const [steps, setSteps] = useState<string>("");
+
+  useEffect(() => {
+    const getSteps = async () => {
+      const val = await GET(urls.steps, login);
+      if (val && val.success) {
+        setSteps(val.steps.toString());
+      }
+    };
+    getSteps();
+  }, [open, login]);
 
   const handleClose = async () => {
     console.log("Submit button clicked, steps:", steps);
@@ -24,7 +34,7 @@ const DailyStepsModal: React.FC<DailyStepsModalProps> = ({ open, onClose }) => {
 
       const body = { steps: parsedSteps };
       try {
-        await POST(`${urls.createSteps}`, body, login);
+        await POST(`${urls.steps}`, body, login);
         console.log("Steps saved successfully");
         return true;
       } catch (error) {
