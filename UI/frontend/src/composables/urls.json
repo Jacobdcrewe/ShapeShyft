@@ -16,5 +16,5 @@
     "tips": "https://api.shapeshyft.online/api/v1/health/tips",
     "total_calories": "https://api.shapeshyft.online/api/v1/food/totalCalories",
     "getExercisesBySearch": "https://api.shapeshyft.online/api/v1/exercise/getExercisesBySearch",
-    "createSteps": "https://api.shapeshyft.online/api/v1/exercise/createSteps"
+    "steps": "https://api.shapeshyft.online/api/v1/exercise/steps"
 }
