@@ -23,7 +23,8 @@ export function CalorySection() {
         await setCaloriesToConsume(val);
       }
 
-      const cal = await GET(urls.total_calories, login);
+      const today = new Date().toISOString().split("T")[0];
+      const cal = await GET(urls.total_calories + "?date=" + today , login);
       if (cal && cal.success) {
         const val = parseInt(cal.total_calories);
         await setIntake(val);
