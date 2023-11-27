@@ -39,7 +39,7 @@ export function Dashboard() {
   useEffect(() => {
     const getSleep = async () => {
       const sleep = await GET(file.get_sleep, login);
-      console.log(sleep)
+      //console.log(sleep)
       const val = sleep.find((item: any) => {
         return new Date(item.date).toISOString().split("T")[0] === today;
       });

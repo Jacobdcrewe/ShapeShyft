@@ -29,23 +29,29 @@ const Exercise: React.FC = () => {
   useEffect(() => {
     const fetchSteps = async () => {
       try {
-        const response = await GET(urls.steps, login); 
-        const fetchedSteps = response.steps; 
-        setSteps(fetchedSteps);
-        setModalOpen(fetchedSteps === 0);
+        const today = new Date().toISOString().split("T")[0];
+        const response = await GET(urls.steps + "?date=" + today, login);
+        //console.log(response);
+        if(response && response.success) {
+          const fetchedSteps = response.steps; 
+          setSteps(fetchedSteps);
+          setModalOpen(fetchedSteps === 0);
+        }
+       
       } catch (error) {
         console.error('Error fetching steps:', error);
       }
     };
 
     fetchSteps();
-  }, []);
+  }, [login]);
 
   const handleEditSteps = () => {
     setModalOpen(true); 
   };
 
   const handleModalClose = async (inputSteps: string) => {
+    //console.log('inputSteps:', inputSteps)
     const numericSteps = parseInt(inputSteps, 10);
     if (!isNaN(numericSteps)) {
       try {

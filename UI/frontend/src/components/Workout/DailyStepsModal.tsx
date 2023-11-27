@@ -16,7 +16,8 @@ const DailyStepsModal: React.FC<DailyStepsModalProps> = ({ open, onClose }) => {
   useEffect(() => {
     if (open) {
       const getSteps = async () => {
-        const val = await GET(urls.steps, login);
+        const today = new Date().toISOString().split("T")[0];
+        const val = await GET(urls.steps + "?date=" + today , login);
         if (val && val.success) {
           setSteps(val.steps.toString());
         }
