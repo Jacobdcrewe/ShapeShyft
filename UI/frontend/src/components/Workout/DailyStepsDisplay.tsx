@@ -5,9 +5,10 @@ import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 
 interface DailyStepsDisplayProps {
   stepsTaken: number;
+  onEdit: () => void;
 }
 
-const DailyStepsDisplay: React.FC<DailyStepsDisplayProps> = ({ stepsTaken }) => {
+const DailyStepsDisplay: React.FC<DailyStepsDisplayProps> = ({ stepsTaken, onEdit }) => {
   const STEP_GOAL = 10000;
   const stepsRemaining = STEP_GOAL - stepsTaken;
 
@@ -72,6 +73,14 @@ const DailyStepsDisplay: React.FC<DailyStepsDisplayProps> = ({ stepsTaken }) => 
           ))}
         </div>
       </div>
+      <div>
+            <button 
+              onClick={onEdit} 
+              className="mr-16 mt-64 bg-gradient-to-t from-indigo-950 to-pink-950 text-white rounded focus:outline-none hover:scale-75 transform transition duration-300 ease-in-out hover:shadow-lg font-bold py-2 px-4"
+            >
+            Edit Steps
+            </button>
+          </div>
     </div>
   );
 };

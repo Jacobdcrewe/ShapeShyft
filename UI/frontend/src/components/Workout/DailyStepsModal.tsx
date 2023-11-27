@@ -11,15 +11,18 @@ interface DailyStepsModalProps {
 const DailyStepsModal: React.FC<DailyStepsModalProps> = ({ open, onClose }) => {
   const { login } = useContext(UserContext);
   const [steps, setSteps] = useState<string>("");
+  const [shouldShowModal, setShouldShowModal] = useState<boolean>(false);
 
   useEffect(() => {
-    const getSteps = async () => {
-      const val = await GET(urls.steps, login);
-      if (val && val.success) {
-        setSteps(val.steps.toString());
-      }
-    };
-    getSteps();
+    if (open) {
+      const getSteps = async () => {
+        const val = await GET(urls.steps, login);
+        if (val && val.success) {
+          setSteps(val.steps.toString());
+        }
+      };
+      getSteps();
+    }
   }, [open, login]);
 
   const handleClose = async () => {
@@ -45,6 +48,7 @@ const DailyStepsModal: React.FC<DailyStepsModalProps> = ({ open, onClose }) => {
 
     const saveSuccess = await handleSaveSteps();
     if (saveSuccess) {
+      
       onClose(steps);
     } else {
       console.error("No steps entered");
