@@ -30,6 +30,39 @@ export function HealthAndWellness() {
 
   const [weight, setWeight] = useState(0); // Initialize weight
   const [height, setHeight] = useState(0); // Initialize height
+ // Function to send BMI data to backend
+ const sendBmiDataToBackend = async (weight: number, height: number) => {
+  const bmi = calculateBMI(weight, height); // Calculate BMI
+  try {
+    // Replace with your actual API call
+    const response = await POST(
+      file.post_bmi,
+      { weight, height, bmi }, // Send the calculated BMI
+      login
+    );
+    if (response.success) {
+      setBmiResponse(`BMI Data Sent Successfully: ${bmi}`);
+      fetchPersonalizedHealthTips(); // Fetch personalized health tips after successful POST
+    } else {
+      setBmiResponse("Failed to send BMI data.");
+    }
+  } catch (error) {
+    console.error("Error sending BMI data:", error);
+    setBmiResponse("Failed to send BMI data.");
+  }
+};
+  useEffect(() => {
+    const getHeightAndWeight = async () => {
+      const val = await GET(file.me, login);
+    if(val && val.success){
+      setWeight(val.weight);
+      setHeight(val.height);
+      await sendBmiDataToBackend(val.weight, val.height);
+    }
+    }
+    getHeightAndWeight();
+    
+  }, [login]);
 
   const handleWeightChange = async (newWeight: number) => {
     setWeight(newWeight);
@@ -41,27 +74,7 @@ export function HealthAndWellness() {
     await sendBmiDataToBackend(weight, newHeight);
   };
 
-  // Function to send BMI data to backend
-  const sendBmiDataToBackend = async (weight: number, height: number) => {
-    const bmi = calculateBMI(weight, height); // Calculate BMI
-    try {
-      // Replace with your actual API call
-      const response = await POST(
-        file.post_bmi,
-        { weight, height, bmi }, // Send the calculated BMI
-        login
-      );
-      if (response.success) {
-        setBmiResponse(`BMI Data Sent Successfully: ${bmi}`);
-        fetchPersonalizedHealthTips(); // Fetch personalized health tips after successful POST
-      } else {
-        setBmiResponse("Failed to send BMI data.");
-      }
-    } catch (error) {
-      console.error("Error sending BMI data:", error);
-      setBmiResponse("Failed to send BMI data.");
-    }
-  };
+ 
 
   // State to store the backend response
   const [bmiResponse, setBmiResponse] = useState("");
@@ -244,7 +257,7 @@ export function HealthAndWellness() {
     if (savedSleepEnd) {
       setSleepEnd(savedSleepEnd);
     }
-  }, []);
+  }, [login, today]);
 
   useEffect(() => {
     const calculateSleepDuration = () => {
@@ -503,6 +516,7 @@ export function HealthAndWellness() {
                 value={weight}
                 onChange={(e) => handleWeightChange(Number(e.target.value))}
                 className="w-full mt-2 p-2 border border-gray-300 rounded"
+                disabled={true}
               />
             </div>
             <div>
@@ -513,6 +527,7 @@ export function HealthAndWellness() {
                 value={height}
                 onChange={(e) => handleHeightChange(Number(e.target.value))}
                 className="w-full mt-2 p-2 border border-gray-300 rounded"
+                disabled={true}
               />
             </div>
           </div>
