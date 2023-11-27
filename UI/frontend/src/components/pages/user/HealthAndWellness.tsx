@@ -553,7 +553,7 @@ export function HealthAndWellness() {
         </section>
       </div>
       <div>
-        {/* ----------------------- Personalized Health & Fitness Tips -----------------------------*/}
+        {/* ----------------------- Personalized Health & Fitness Tips -----------------------------
         <section className="my-10 p-6 bg-white rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4 text-blue-600">
             Personalized Health & Fitness Tips
@@ -573,7 +573,7 @@ export function HealthAndWellness() {
               </p>
             )}
           </div>
-        </section>
+        </section> */}
       </div>
     </div>
   );
