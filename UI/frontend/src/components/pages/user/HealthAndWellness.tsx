@@ -4,22 +4,18 @@ import { GET } from "../../../composables/api";
 import { UserContext } from "../../ContentRouter";
 import file from "../../../composables/urls.json";
 import { BeakerIcon, BoltIcon } from "@heroicons/react/24/solid";
-import UserInfoSection from "../../dashboard/UserInfoSection";
-import CalorySection from "../../dashboard/calory/CalorySection";
-import ExerciseSection from "../../dashboard/ExerciseSection";
 import HealthSection from "../../dashboard/HealthSection";
 import "./HealthAndWellness.css";
 
 export function HealthAndWellness() {
   // For the API
-  const [user, setUser] = useState("(example of making api call) click me!");
   const { login } = useContext(UserContext);
 
   // State for counters
   const [waterCount, setWaterCount] = useState(0); // Allow both number and null
   const [waterAmount, setWaterAmount] = useState(0);
 
-
+  // State for refreshing evryday
   const today = new Date().toISOString().split("T")[0];
 
   const [sleepDataResponse, setSleepDataResponse] = useState("");
@@ -47,14 +43,17 @@ export function HealthAndWellness() {
 
   // Function to send BMI data to backend
   const sendBmiDataToBackend = async (weight: number, height: number) => {
+    const bmi = calculateBMI(weight, height); // Calculate BMI
     try {
       // Replace with your actual API call
-      const response = await POST(file.post_bmi, { weight, height, Bmi }, login);
-      // setBmiResponse(
-      //   `Weight: ${weight} kg, Height: ${height} cm, BMI: ${response.bmi}`
-      // );
+      const response = await POST(
+        file.post_bmi,
+        { weight, height, bmi }, // Send the calculated BMI
+        login
+      );
       if (response.success) {
-        setBmiResponse(`BMI Data Sent Successfully: ${Bmi}`);
+        setBmiResponse(`BMI Data Sent Successfully: ${bmi}`);
+        fetchPersonalizedHealthTips(); // Fetch personalized health tips after successful POST
       } else {
         setBmiResponse("Failed to send BMI data.");
       }
@@ -69,27 +68,14 @@ export function HealthAndWellness() {
   const [Bmi, setBmi] = useState(0);
 
   // Calculate BMI
-  const calculateBMI = () => {
+  const calculateBMI = (weight: number, height: number) => {
     if (weight <= 0 || height <= 0) {
       return "N/A";
     }
-    const bmi = weight / (height * height * 0.0001); // Adjusting for pounds and inches
+    const bmi = weight / (height * height * 0.0001); // Calculate BMI formula
+    setBmi(bmi); // Set the BMI state
     return bmi.toFixed(2);
   };
-
-  // Reminder logic for water consumption
-  const checkWaterIntake = () => {
-    const currentHour = new Date().getHours();
-    if (currentHour >= 8 && currentHour <= 23) {
-      const hoursPassed = currentHour - 8;
-      const glassesShouldHaveDrunk = Math.floor(hoursPassed / 3);
-      if (waterCount < glassesShouldHaveDrunk) {
-        alert("Remember to drink more water!");
-      }
-    }
-  };
-
-
 
   // Placeholder for personalized health tips fetched from the backend
   const [personalizedHealthTips, setPersonalizedHealthTips] = useState("");
@@ -98,27 +84,40 @@ export function HealthAndWellness() {
     waterCount: number;
   }
 
+  // Function to fetch personalized health tips from the backend
+  const fetchPersonalizedHealthTips = async () => {
+    try {
+      const response = await GET(file.tips, login);
+      if (response && response.data) {
+        setPersonalizedHealthTips(response.data);
+      } else {
+        console.error(
+          "Error fetching personalized health tips: Invalid response"
+        );
+        setPersonalizedHealthTips("Failed to load personalized tips.");
+      }
+    } catch (error) {
+      console.error("Error fetching personalized health tips:", error);
+      setPersonalizedHealthTips("Failed to load personalized tips.");
+    }
+  };
+
   // Function to send user data to the backend
   const sendUserDataToBackend = async () => {
     try {
       // Replace with your actual API endpoint for sending user data
-      const response = await POST(file.tips, {
-        waterCount,
-        weight,
-        height,
-        bmi: Bmi,
-        sleepStart,
-        sleepEnd,
-      }, login);
+      const postResponse = await POST(file.post_bmi, login);
 
-      // if (response.success) {
-      //   console.log("User data sent successfully:", response);
-      //   fetchPersonalizedHealthTips(); // Fetch personalized tips after sending user data
-      // } else {
-      //   console.error("Error sending user data:", response);
-      // }
+      if (postResponse.success) {
+        console.log("User data sent successfully:", postResponse);
+        await fetchPersonalizedHealthTips(); // Fetch personalized tips after sending user data
+      } else {
+        console.error("Error sending user data:", postResponse);
+        setPersonalizedHealthTips("Failed to load personalized tips.");
+      }
     } catch (error) {
       console.error("Error sending user data:", error);
+      setPersonalizedHealthTips("Failed to load personalized tips.");
     }
   };
 
@@ -166,6 +165,35 @@ export function HealthAndWellness() {
   }
 
   useEffect(() => {
+    const GetWaterCount = async () => {
+      try {
+        const val = await GET(file.get_water, login);
+        const today = new Date().toISOString().split("T")[0];
+        const water = val.find((item: any) => {
+          return new Date(item.date).toISOString().split("T")[0] === today;
+        });
+        if (water && water.amt !== undefined) {
+          setWaterCount(water.amt);
+        } else {
+          setWaterCount(0); // Fallback to 0 if response does not have waterCount
+        }
+      } catch (e) {
+        console.error("Error: fetching water count from backend failed.", e);
+        setWaterCount(0);
+      }
+    };
+
+    // Reminder logic for water consumption
+    const checkWaterIntake = () => {
+      const currentHour = new Date().getHours();
+      if (currentHour >= 8 && currentHour <= 23) {
+        const hoursPassed = currentHour - 8;
+        const glassesShouldHaveDrunk = Math.floor(hoursPassed / 3);
+        if (waterCount < glassesShouldHaveDrunk) {
+          alert("Remember to drink more water!");
+        }
+      }
+    };
     // Fetch water count from the backend when the component is mounted
     GetWaterCount();
 
@@ -175,7 +203,7 @@ export function HealthAndWellness() {
     }, 3600000); // Check every hour (3600000 milliseconds)
 
     return () => clearInterval(interval); // Clean up the interval on component unmount
-  }, [waterCount]);
+  }, [login, waterCount]);
 
   useEffect(() => {
     const getWater = async () => {
@@ -183,7 +211,7 @@ export function HealthAndWellness() {
       const val = water.find((item: any) => {
         return new Date(item.date).toISOString().split("T")[0] === today;
       });
-      if(val && val.success) {
+      if (val && val.success) {
         setWaterAmount(val.amt);
       }
     };
@@ -218,32 +246,35 @@ export function HealthAndWellness() {
     }
   }, []);
 
-  
-
   useEffect(() => {
+    const calculateSleepDuration = () => {
+      if (sleepStart && sleepEnd) {
+        const startTime: Date = new Date(`01/01/2000 ${sleepStart}`);
+        const endTime: Date = new Date(`01/01/2000 ${sleepEnd}`);
+
+        // Check if the dates are valid
+        if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+          return ""; // Return empty string or handle invalid date
+        }
+
+        if (endTime < startTime) {
+          // Assumes sleep went overnight to the next day
+          endTime.setDate(endTime.getDate() + 1);
+        }
+
+        const duration = endTime.getTime() - startTime.getTime();
+        const hours = Math.floor(duration / 3600000); // convert milliseconds to hours
+        const minutes = Math.floor((duration % 3600000) / 60000); // remaining milliseconds to minutes
+
+        return `${hours} hours and ${minutes} minutes`;
+      }
+      return "";
+    };
+
     const duration = calculateSleepDuration();
     setSleepDuration(duration);
   }, [sleepStart, sleepEnd]);
 
-  const GetWaterCount = async () => {
-    try {
-      const val = await GET(file.get_water, login);
-      const today = new Date().toISOString().split("T")[0];
-      const water = val.find((item: any) => {
-        return new Date(item.date).toISOString().split("T")[0] === today;
-      });
-      if (water && water.amt !== undefined) {
-        setWaterCount(water.amt);
-      } else {
-        setWaterCount(0); // Fallback to 0 if response does not have waterCount
-      }
-    } catch (e) {
-      console.error("Error: fetching water count from backend failed.", e);
-      setWaterCount(0);
-    }
-  };
-
-  
   // Function to fetch BMI data from the backend
   const fetchBmiData = async () => {
     try {
@@ -261,34 +292,40 @@ export function HealthAndWellness() {
 
   useEffect(() => {
     // Fetch BMI data from the backend when the component is mounted
-    fetchBmiData()
+    fetchBmiData();
+  }, [login, fetchBmiData]);
 
-  }, [login]);
+  useEffect(() => {
+    sendUserDataToBackend();
+  }, [login, waterCount, weight, height, Bmi, sleepStart, sleepEnd]);
 
   // Fetching data from the backend
   useEffect(() => {
-    // replace with your actual backend request
     const fetchPersonalizedHealthTips = async () => {
       try {
-        // Replace with your actual API endpoint for fetching personalized tips
         const response = await GET(file.tips, login);
         if (response && response.data) {
           setPersonalizedHealthTips(response.data);
         } else {
-          console.error("Error fetching personalized health tips: Invalid response");
+          console.error(
+            "Error fetching personalized health tips: Invalid response"
+          );
+          setPersonalizedHealthTips("Failed to load personalized tips.");
         }
       } catch (error) {
         console.error("Error fetching personalized health tips:", error);
+        setPersonalizedHealthTips("Failed to load personalized tips.");
       }
     };
-    
 
     fetchPersonalizedHealthTips();
-  }, []);
+  }, [login]);
 
   const PostWaterCount = async (updatedCount: any) => {
     try {
       const val = await POST(file.post_water, { amt: updatedCount }, login);
+      setWaterCount(updatedCount);
+      setWaterAmount(updatedCount);
       if (val.success) {
         // Successful POST is printed on console
         console.log(val);
@@ -301,15 +338,9 @@ export function HealthAndWellness() {
   const handleWaterCountChange = (delta: any) => {
     const updatedCount = waterCount + delta;
     console.log(updatedCount);
-    setWaterCount(updatedCount);
     PostWaterCount(updatedCount); // Send the updated count to the backend
   };
 
-  const displayExampleAlert = () => {
-    alert(
-      "This is an example of the alert you get when you don't drink enough water during the day"
-    );
-  };
   const postSleepData = async () => {
     const s_time = convert12Hour(sleepStart);
     const e_time = convert12Hour(sleepEnd);
@@ -320,8 +351,9 @@ export function HealthAndWellness() {
 
     try {
       const val = await POST(file.post_sleep, sleepData, login);
-      if (val.success) {
+      if (val && val.success) {
         console.log("Sleep data posted successfully:", val);
+        setSleepAmount(val.h_slept);
         setSleepDataResponse("Sleep data posted successfully");
       }
     } catch (e) {
@@ -343,29 +375,10 @@ export function HealthAndWellness() {
     }
     return time.join("");
   };
-  const calculateSleepDuration = () => {
-    if (sleepStart && sleepEnd) {
-      const startTime: Date = new Date(`01/01/2000 ${sleepStart}`);
-      const endTime: Date = new Date(`01/01/2000 ${sleepEnd}`);
 
-      // Check if the dates are valid
-      if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-        return ""; // Return empty string or handle invalid date
-      }
-
-      if (endTime < startTime) {
-        // Assumes sleep went overnight to the next day
-        endTime.setDate(endTime.getDate() + 1);
-      }
-
-      const duration = endTime.getTime() - startTime.getTime();
-      const hours = Math.floor(duration / 3600000); // convert milliseconds to hours
-      const minutes = Math.floor((duration % 3600000) / 60000); // remaining milliseconds to minutes
-
-      return `${hours} hours and ${minutes} minutes`;
-    }
-    return "";
-  };
+  {
+    /* ----------------- Health & Welness top page ----------------------- */
+  }
 
   return (
     <div className="container mx-auto p-8 bg-gray-100">
@@ -379,57 +392,50 @@ export function HealthAndWellness() {
           <h2 className="text-4xl font-semibold mb-4 text-blue-600">
             Track Your Health
           </h2>
+
+          {/* ----------------- Water Tracker ----------------------- */}
+
           <section className="mb-8 border-b pb-6">
-          <h3 className="text-2xl font-semibold mb-4 text-blue-600">
-            Water Tracker{" "}
-          </h3>
-          <div className="flex items-center mb-4 space-x-4">
-          
-            <p className="w-1/4 text-lg">Water (Glasses)</p>
-            <button
-              className={`${
-                waterCount <= 0
-                  ? "bg-gray-400 text-gray-200"
-                  : "bg-blue-500 text-white"
-              } px-3 py-2 rounded-full`}
-              onClick={() => handleWaterCountChange(-1)}
-              disabled={waterCount <= 0}
-            >
-              -
-            </button>
-            <span className="w-1/4 text-center text-xl">{waterCount}</span>
-            <button
-              className="bg-blue-500 text-white px-3 py-2 rounded-full"
-              onClick={() => handleWaterCountChange(1)}
-            >
-              +
-            </button>
-            
-          </div>
-          <WaterTrackerMessage waterCount={waterCount} />
+            <h3 className="text-2xl font-semibold mb-4 text-blue-600">
+              Water Tracker{" "}
+            </h3>
+            <div className="flex items-center mb-4 space-x-4">
+              <p className="w-1/4 text-lg">Water (Glasses)</p>
+              <button
+                className={`${
+                  waterCount <= 0
+                    ? "bg-gray-400 text-gray-200"
+                    : "bg-blue-500 text-white"
+                } px-3 py-2 rounded-full`}
+                onClick={() => handleWaterCountChange(-1)}
+                disabled={waterCount <= 0}
+              >
+                -
+              </button>
+              <span className="w-1/4 text-center text-xl">{waterCount}</span>
+              <button
+                className="bg-blue-500 text-white px-3 py-2 rounded-full"
+                onClick={() => handleWaterCountChange(1)}
+              >
+                +
+              </button>
+            </div>
+            <WaterTrackerMessage waterCount={waterCount} />
           </section>
           <section className="mb-8 border-b pb-6">
-          <div className="rounded-xl p-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] col-span-1  flex items-center justify-evenly flex-wrap xl:flex-nowrap">
-          <HealthSection
-            actual={waterAmount}
-            recommended={8}
-            prompt="Glasses of Water Today"
-            usedColor="rgb(2 132 199)"
-            icon={<BeakerIcon className="w-full h-full" />}
-          />
-        </div>
+            <div className="rounded-xl p-4 py-2 bg-white overflow-hidden shadow-[0px_0px_10px_rgba(0,0,0,0.2)] col-span-1  flex items-center justify-evenly flex-wrap xl:flex-nowrap">
+              <HealthSection
+                actual={waterAmount}
+                recommended={8}
+                prompt="Glasses of Water Today"
+                usedColor="rgb(2 132 199)"
+                icon={<BeakerIcon className="w-full h-full" />}
+              />
+            </div>
+          </section>
         </section>
-          
 
-          {/* Example Alert Button */}
-          <button
-            onClick={displayExampleAlert}
-            className="bg-blue-500 text-white px-6 py-2 rounded shadow hover:bg-blue-600 transition"
-          >
-            Show Example Alert
-          </button>
-        </section>
-        
+        {/* ----------------- Sleep Tracker ----------------------- */}
 
         <section className="mb-8 border-b pb-6">
           <div className="mb-4">
@@ -482,7 +488,8 @@ export function HealthAndWellness() {
             />
           </div>
         </section>
-        {/* Second Section - User Information */}
+
+        {/* ---------------- Second Section - User Information ---------------*/}
         <section className="mt-8">
           <h2 className="text-3xl font-semibold mb-4 text-blue-600">
             User Information
@@ -509,28 +516,19 @@ export function HealthAndWellness() {
               />
             </div>
           </div>
-        <h2 className="text-2xl font-semibold mb-4 text-blue-600">BMI Response</h2>
-        <div>
-          <p className="text-lg">{Bmi}</p>
-        </div>
-      
-          <section className="mt-8">
-          <button
-        onClick={() => {
-          calculateBMI(); // Calculate BMI
-          sendBmiDataToBackend(weight, height); // Update BMI data in the backend
-          fetchBmiData(); // Fetch and update BMI data from the backend
-        }}
-        className="bg-blue-500 text-white px-6 py-2 rounded shadow hover:bg-blue-600 transition"
-      >
-         Calculate BMI
-      </button>
-      </section>
+          <h2 className="text-2xl font-semibold mb-4 text-blue-600">
+            BMI Response
+          </h2>
+          <div>
+            <p className="text-lg">{Bmi}</p>
+          </div>
         </section>
         <section className="mt-8">
           {/* BMI Calculator */}
           <div>
-            <p  className="text-2xl font-semibold mb-4 text-blue-600">BMI Chart</p>
+            <p className="text-2xl font-semibold mb-4 text-blue-600">
+              BMI Chart
+            </p>
             <img
               src="https://www.pnbmetlife.com/content/dam/pnb-metlife/images/icons/bmi-calculator/meter.png"
               alt="BMI chart"
@@ -540,18 +538,25 @@ export function HealthAndWellness() {
         </section>
       </div>
       <div>
-        {/* New Section for Personalized Health & Fitness Tips */}
+        {/* ----------------------- Personalized Health & Fitness Tips -----------------------------*/}
         <section className="my-10 p-6 bg-white rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4 text-blue-600">
             Personalized Health & Fitness Tips
           </h2>
+          <button
+            onClick={fetchPersonalizedHealthTips}
+            className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+          >
+            Generate Personalized Tips
+          </button>
           <div className="space-y-4">
             {personalizedHealthTips ? (
               <p className="text-gray-700">{personalizedHealthTips}</p>
             ) : (
-              <p className="text-gray-500">Loading your personalized tips...</p>
+              <p className="text-gray-500">
+                Your personalized tips will appear here...
+              </p>
             )}
-            {/* More space for additional info */}
           </div>
         </section>
       </div>
