@@ -532,7 +532,7 @@ export function HealthAndWellness() {
             </div>
           </div>
           <h2 className="text-2xl font-semibold mb-4 text-blue-600">
-            BMI Response
+            BMI
           </h2>
           <div>
             <p className="text-lg">{Bmi}</p>
