@@ -7,6 +7,7 @@ import CalorySection from "../../dashboard/calory/CalorySection";
 import ExerciseSection from "../../dashboard/ExerciseSection";
 import HealthSection from "../../dashboard/HealthSection";
 import { BeakerIcon, BoltIcon } from "@heroicons/react/24/solid";
+import { getToday } from "../../../composables/sharedFunction";
 
 export function Dashboard() {
   // const [exuser, setExUser] = useState(
@@ -21,8 +22,9 @@ export function Dashboard() {
   //   const val = await GET(file.me, login);
   //   setExUser(JSON.stringify(val));
   // };
-  const today = new Date().toISOString().split("T")[0];
+  const today = getToday();
 
+  console.log("Today: " + today);
   useEffect(() => {
     const getWater = async () => {
       const water = await GET(file.get_water, login);

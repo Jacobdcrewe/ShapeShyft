@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { GET, POST } from "../../composables/api";
 import urls from "../../composables/urls.json";
 import { UserContext } from "../ContentRouter";
+import { getToday } from "../../composables/sharedFunction";
 
 interface DailyStepsModalProps {
   open: boolean;
@@ -16,7 +17,7 @@ const DailyStepsModal: React.FC<DailyStepsModalProps> = ({ open, onClose }) => {
   useEffect(() => {
     if (open) {
       const getSteps = async () => {
-        const today = new Date().toISOString().split("T")[0];
+        const today = getToday();
         const val = await GET(urls.steps + "?date=" + today , login);
         if (val && val.success) {
           setSteps(val.steps.toString());
