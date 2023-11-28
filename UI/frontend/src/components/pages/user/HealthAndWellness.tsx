@@ -37,7 +37,7 @@ export function HealthAndWellness() {
     // Replace with your actual API call
     const response = await POST(
       file.post_bmi,
-      { weight, height, bmi }, // Send the calculated BMI
+      { weight: weight, height: height }, // Send the calculated BMI
       login
     );
     if (response.success) {
@@ -516,7 +516,6 @@ export function HealthAndWellness() {
                 value={weight}
                 onChange={(e) => handleWeightChange(Number(e.target.value))}
                 className="w-full mt-2 p-2 border border-gray-300 rounded"
-                disabled={true}
               />
             </div>
             <div>
@@ -527,7 +526,6 @@ export function HealthAndWellness() {
                 value={height}
                 onChange={(e) => handleHeightChange(Number(e.target.value))}
                 className="w-full mt-2 p-2 border border-gray-300 rounded"
-                disabled={true}
               />
             </div>
           </div>
