@@ -6,6 +6,7 @@ import { UserContext } from "../../ContentRouter";
 import { GET } from "../../../composables/api";
 import urls from "../../../composables/urls.json";
 import Loading from "../../common/Loading";
+import { getToday } from "../../../composables/sharedFunction";
 
 export function CalorySection() {
   const { login } = useContext(UserContext);
@@ -23,7 +24,7 @@ export function CalorySection() {
         await setCaloriesToConsume(val);
       }
 
-      const today = new Date().toISOString().split("T")[0];
+      const today = getToday();
       const cal = await GET(urls.total_calories + "?date=" + today , login);
       if (cal && cal.success) {
         const val = parseInt(cal.total_calories);

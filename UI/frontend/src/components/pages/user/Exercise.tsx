@@ -11,6 +11,7 @@ import SearchResults from "../../Workout/SearchResults";
 import { UserContext } from "../../ContentRouter";
 import { GET, POST } from "../../../composables/api";
 import urls from "../../../composables/urls.json";
+import { getToday } from "../../../composables/sharedFunction";
 
 interface ExerciseContextValue {
   exercises: ExerciseCardProps[];
@@ -29,7 +30,7 @@ const Exercise: React.FC = () => {
   useEffect(() => {
     const fetchSteps = async () => {
       try {
-        const today = new Date().toISOString().split("T")[0];
+        const today = getToday();
         const response = await GET(urls.steps + "?date=" + today, login);
         //console.log(response);
         if(response && response.success) {

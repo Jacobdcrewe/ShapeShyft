@@ -12,6 +12,7 @@ import days from "../../composables/days.json";
 import { UserContext } from "../ContentRouter";
 import { GET } from "../../composables/api";
 import file from "../../composables/urls.json";
+import { formatDate, getToday } from "../../composables/sharedFunction";
 
 export function ExerciseSection() {
   const { login } = useContext(UserContext);
@@ -33,9 +34,8 @@ export function ExerciseSection() {
       for (let i = 6; i >= 0; i--) {
         const day = new Date(today);
         day.setDate(today.getDate() - i);
-        console.log(day.toISOString().split("T")[0]);
         const val = await GET(
-          file.steps + "?date=" + day.toISOString().split("T")[0],
+          file.steps + "?date=" + formatDate(day.toLocaleDateString()),
           login
         );
         if (val && val.success) {
