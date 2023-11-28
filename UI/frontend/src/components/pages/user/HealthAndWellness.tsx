@@ -119,7 +119,7 @@ export function HealthAndWellness() {
   const sendUserDataToBackend = async () => {
     try {
       // Replace with your actual API endpoint for sending user data
-      const postResponse = await POST(file.post_bmi, login);
+      const postResponse = await POST(file.post_bmi, {weight: weight, height: height}, login);
 
       if (postResponse.success) {
         console.log("User data sent successfully:", postResponse);
